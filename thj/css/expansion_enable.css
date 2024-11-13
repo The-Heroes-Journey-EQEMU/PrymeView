@@ -1,0 +1,34 @@
+/* to enable expansions just set them to the exanpsion number and the search should be come active ont he search page
+['id' => 0, 'name' => 'Original', 'icon' => 'originalicon.gif'],
+                    ['id' => 1, 'name' => 'Kunark'
+                    ['id' => 2, 'name' => 'Velious,
+                    ['id' => 3, 'name' => 'Luclin',
+                    ['id' => 4, 'name' => 'Planes of Power',
+                    ['id' => 5, 'name' => 'LDON', 
+                    ['id' => 6, 'name' => 'LOY',
+                    ['id' => 7, 'name' => 'Gates of Discord',,
+                    ['id' => 8, 'name' => 'Omens',]
+                ];*/
+/* Hide all expansion buttons initially */
+.expansion-selection .expansion-icon-container {
+    display: none;
+}
+
+/* Show only the Original expansion (id = 0) */
+.expansion-selection .expansion-0 {
+    display: none;
+}
+
+/*
+ Example: To unhide the Kunark expansion (id = 1) 
+.expansion-selection .expansion-1 {
+    display: block;
+}
+
+/* To unhide multiple expansions, you can list them together
+.expansion-selection .expansion-2,
+.expansion-selection .expansion-3 {
+    display: block;
+}
+*/
+

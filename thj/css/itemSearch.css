@@ -1,0 +1,270 @@
+/* Slot Selection Styling */
+.slot-selection-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 5px;
+}
+
+.slot-image {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
+}
+
+.slot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.slot-title {
+    font-size: 0.8em;
+    color: #ddd0b0; /* Sand color */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Define a brighter glowing sand effect for selected elements */
+@keyframes glowSand {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(210, 180, 140, 0.7); /* Brighter sand glow */
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(210, 180, 140, 1); /* More intense glow */
+    }
+}
+
+/* Stronger selected effect for rows, races, and classes */
+.selected {
+    background-color: rgba(210, 180, 140, 0.4); /* Brighter sand background */
+    box-shadow: 0 0 20px rgba(210, 180, 140, 1); /* Intense sand glow effect */
+    border-radius: 8px;
+    animation: glowSand 1.5s infinite alternate;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transform: scale(1.05); /* Slight enlargement for visibility */
+}
+
+
+/* Adjust Race Selection */
+.race-selection, .class-selection {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    
+}
+
+.race-icon-container, .class-icon-container {
+    transition: filter 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.race-icon-container.selected, .class-icon-container.selected {
+    filter: brightness(1.3);
+    background-color: rgba(210, 180, 140, 0.2); /* Light sand */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.5); /* Sand glow */
+    border-radius: 5px;
+}
+
+.race-icon, .class-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 3px;
+    filter: brightness(0.7);
+    transition: transform 0.2s ease-in-out;
+}
+
+.race-abbreviation, .class-abbreviation {
+    text-align: center;
+    font-weight: bold;
+    color: #ddd0b0; /* Sand color */
+    font-size: 0.8em;
+    margin-bottom: 4px;
+}
+
+/* Glow effect on hover for slot images */
+.slot-image:hover {
+    filter: brightness(1.2);
+    transition: filter 0.2s ease, outline 0.2s ease;
+}
+
+/* Search Form Styling */
+#searchForm {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-left: -6px;
+}
+
+#search {
+    padding: 5px;
+    width: 175px;
+}
+
+/* Animated Search Button with Sand Glow */
+.search-form button {
+    background: rgba(210, 180, 140, 0.8); /* Sand-colored border */
+    color: #504a3a; /* Sand text color */
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
+    margin-top: 20px;
+}
+
+/* Hover effect with intensified sand glow */
+.search-form button:hover {
+    background: linear-gradient(135deg, #504a3a, #ddd0b0); /* Dark gray to light sand gradient */
+    color: #ffffff; /* White text on hover */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.8), 
+                0 0 20px rgba(210, 180, 140, 0.6), 
+                0 0 30px rgba(210, 180, 140, 0.5); /* Stronger sand glow */
+    transform: scale(1.05);
+}
+
+.search-form button:active {
+    animation: pulse 0.5s ease;
+}
+
+/* Expansion Selection */
+.expansion-selection {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.expansion-icon-container {
+    cursor: pointer;
+    margin: 5px;
+    text-align: center;
+}
+
+.expansion-icon {
+    width: 40px;
+    height: 30px;
+    object-fit: contain;
+    transform: scale(0.75);
+    transition: transform 0.2s ease-in-out;
+}
+
+.expansion-icon-container.selected .expansion-icon {
+    border: 2px solid rgba(210, 180, 140, 0.5); /* Soft sand border */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.7); /* Sand glow */
+}
+
+/* General Form Control Styling */
+.form-control-container,
+#itemTypeSelection,
+#focus_rank_normal_container,
+#focus_rank_enhanced_minion_container {
+    padding: 10px;
+    border-radius: 8px;
+    color: #ddd0b0; /* Sand color */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-control,
+#focus_rank_normal,
+#focus_rank_enhanced_minion,
+#focus_type {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ddd0b0; /* Sand color */
+    background: rgba(30, 30, 30, 0.85); /* Dark background */
+    border: 1px solid #c4a484; /* Sand border */
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"%3E%3Cpath fill="white" d="M5.1 6l4 4 4-4z"/%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+/* Dropdown and Option Styling */
+.form-control option,
+#focus_rank_normal option,
+#focus_rank_enhanced_minion option,
+#focus_type option {
+    background-color: #2e2e2e; /* Dark gray */
+    color: #ddd0b0; /* Sand color */
+}
+
+/* Stat Filter Container Layout */
+.stat-filter-container {
+    display: block;
+    appearance: none;
+    align-items: center;
+    gap: 8px;
+    
+}
+
+/* Stat Filter Inputs */
+.stat-filter-container select,
+.stat-filter-container input[type="number"] {
+    padding: 5px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ddd0b0; /* Sand-colored border */
+    background: rgba(30, 30, 30, 0.85); /* Dark background */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"%3E%3Cpath fill="white" d="M5.1 6l4 4 4-4z"/%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    color: #ddd0b0; /* Sand-colored text */
+    cursor: pointer;
+    appearance: none; /* Remove default dropdown arrow */
+}
+
+/* Hover and Focus Effects for Inputs */
+.stat-filter-container select:hover,
+.stat-filter-container input[type="number"]:hover {
+    border-color: #bbb; /* Darker border on hover */
+}
+
+.stat-filter-container select:focus,
+.stat-filter-container input[type="number"]:focus {
+    outline: 2px solid #ddd0b0; /* Sand-colored focus outline */
+}
+
+/* Label Styling for Filter Options */
+.filter-option {
+    margin-bottom: 12px;
+}
+
+.filter-option label {
+    font-weight: bold;
+    color: #ddd0b0; /* Sand-colored label */
+    margin-right: 10px;
+    width: 100px; /* Align label size */
+}
+
+/* Toggle Styles for Focus Effect and Item Type */
+.focus-effect-toggle,
+.item-type-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"%3E%3Cpath fill="white" d="M5.1 6l4 4 4-4z"/%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* Additional Adjustments */
+#filterContainer {
+    max-height: 100%;
+}
+
+.focus-effect-toggle label,
+.item-type-toggle label {
+    margin-right: 5px;
+}

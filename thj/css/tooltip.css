@@ -1,0 +1,329 @@
+/* Tooltip Styling */
+#tooltip {
+    position: absolute;
+    background-color: rgba(20, 20, 20, 0.95); /* Darker background */
+    color: #ddd0b0; /* Sand text color */
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    width: 475px;
+    display: none;
+    z-index: 1000;
+    border: 2px solid #bfa34b; /* Sand border */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.6); /* Sand shadow */
+}
+
+.tooltip-content {
+    align-items: flex-start;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: rgba(30, 30, 30, 0.9); /* Dark background */
+    color: #ddd0b0; /* Sand text color */
+    font-size: 0.85em;
+    border: 2px solid #bfa34b; /* Sand border */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.6); /* Sand shadow */
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+}
+
+.tooltip-header {
+    display: inline;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tooltip-header .item-icon {
+    width: 32px;
+    height: 32px;
+    background-size: contain;
+}
+
+.tooltip-content .item-name {
+    white-space: normal; /* Allows wrapping for long names */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.5em;
+    color: #c4a484; /* Sand color */
+    font-weight: bold;
+}
+
+
+/* Stats Sections */
+.stat-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-right: 30px;
+}
+
+/* Styling for Magic, Class, Race, Slot section */
+.stat-info {
+    display: flex;
+    flex-direction: column; /* Ensures vertical alignment */
+    justify-content: flex-start; /* Aligns all the elements to the left */
+    gap: 1px; /* Adds some space between each item */
+    word-wrap: break-word;
+}
+
+.stat-info .stat-line {
+    word-break: break-word;
+    color: #ffffff;
+    white-space: normal; /* Allow text to wrap */
+    display: inline;
+}
+
+.stat-info .stat-line b {
+    margin-right: 5px; /* Add spacing between label and value */
+}
+
+/* Adds spacing between stat categories */
+.tooltip-stats {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    margin-right: 5px;
+}
+
+.tooltip-stats table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tooltip-stats td {
+    vertical-align: top;
+    padding: 3px 5px;
+    width: 33%;
+}
+
+.flex-row {
+    display: flex;
+    gap: 10px;
+}
+
+/* Individual Stat Lines */
+.stat-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+    color: #ffffff;
+    line-height: 1.2;
+    min-width: 90px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+/* Heroic Value Styling */
+.heroic-value {
+    color: #f9d342;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+/* Special Stats Styling */
+.special-stats {
+    line-height: 1.2;
+    white-space: normal; /* Allow special stats to wrap */
+    padding-left: 10px;
+}
+
+/* Augment Slots */
+.augment-slot {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.augment-slot img {
+    width: 16px;
+    height: auto;
+    margin-right: 5px;
+}
+
+/* Tooltip Sections */
+.tooltip-section {
+    margin-top: 12px; /* Increased spacing between sections */
+    padding-top: 8px;
+    border-top: 1px solid #bfa34b;
+}
+
+/* .close-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 3px;
+    width: auto; 
+    display: inline-block; 
+    transition: background-color 0.3s;
+    z-index: 10;
+} */
+
+.close-button:hover {
+    background-color: #555;
+}
+
+.item-versions-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.item-version {
+    flex: 1;
+    width: 30%; /* Ensures each item-version has a controlled width */
+}
+
+/* Blue glowing effect for Enchanted upgrade */
+.enchanted-glow {
+    animation: blueGlow 1.5s infinite alternate;
+    border: 2px solid #00bfff;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.7), 0 0 40px rgba(0, 191, 255, 0.5);
+    border-radius: 20px;
+}
+
+@keyframes blueGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 191, 255, 0.4), 0 0 30px rgba(0, 191, 255, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(0, 191, 255, 0.8), 0 0 50px rgba(0, 191, 255, 0.6);
+    }
+}
+
+/* Legendary Glowing Effect with Random Moving Sparkles */
+.legendary-glow {
+    animation: orangeGlow 1.5s infinite alternate;
+    border: 2px solid #ffa500;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.7), 0 0 40px rgba(255, 165, 0, 0.5);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* General Sparkle Effect */
+.legendary-glow .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, #ffffff 0%, rgba(255, 223, 0, 0.8) 50%, transparent 100%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle 2s infinite;
+}
+
+/* Randomly Positioned Sparkles */
+.legendary-glow .sparkle-1 { top: 15%; left: 20%; animation-delay: 0.2s; }
+.legendary-glow .sparkle-2 { top: 40%; right: 10%; animation-delay: 0.5s; }
+.legendary-glow .sparkle-3 { bottom: 30%; left: 35%; animation-delay: 0.7s; }
+.legendary-glow .sparkle-4 { top: 60%; right: 25%; animation-delay: 1s; }
+.legendary-glow .sparkle-5 { bottom: 15%; right: 20%; animation-delay: 1.3s; }
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5) translate(0, 0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translate(10px, -10px);
+    }
+}
+
+/* Keyframes for orange glow */
+@keyframes orangeGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.4), 0 0 30px rgba(255, 165, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 50px rgba(255, 165, 0, 0.6);
+    }
+}
+
+/* Upgrade arrow styling with pulse animation */
+.upgrade-arrow {
+    width: 50px;
+    height: auto;
+    margin: 0 10px;
+    vertical-align: middle;
+    animation: arrowPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes arrowPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Initial state: Set the tab width to fit the icon */
+.upgrade-path-tab-container {
+   
+    width: 40px;
+    position: absolute;
+    top: 50%;
+   
+    
+    z-index: 10;
+    cursor: pointer;
+}
+#upgrade-path-container {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    position: fixed; /* Ensure it's fixed to the screen */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center horizontally and vertically */
+    opacity: 1;
+    z-index: 1002; /* Ensure it appears above other elements */
+    background-color: rgba(0, 0, 0, 0.9); /* Add a dark background for modal effect */
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #bfa34b;
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);
+   min-width: 500px;
+   
+}
+
+
+.upgrade-path-tab {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px 0 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+.upgrade-path-tab img {
+    width: 40px; /* Set a fixed width for the image */
+    height: auto; /* Maintain the aspect ratio */
+    width: 100%; /* Set the image to take up the full width of the button */
+    display: block; /* Ensures the image doesn't overflow */
+}
+
+
+
+
+/* Position the NPC info button inside the item details container */
+.npc-info-toggle-container {
+    margin-top: 5px;
+}

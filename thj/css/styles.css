@@ -1,0 +1,388 @@
+/* Reset body and html to cover full viewport */
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body background with centered logo */
+body {
+    
+    background-size:cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #ffffff; /* Gold */
+    overflow-x: hidden; /* Prevents horizontal scroll */
+}
+
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 100%;
+    background: rgba(210, 180, 140, 0.8); /* Sand-colored border */
+    padding: 20px;
+    
+    overflow-y: auto;
+}
+
+.sidebar img {
+    display: block;
+    max-width: 100%;
+    max-height: 150px;
+    margin: 0 auto 20px;
+}
+
+/* Main content layout */
+.main-content {
+    margin-left: 200px;
+    padding: 20px;
+    height: 97%;
+    display: flex !important;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* Ensures search and details are side by side */
+    flex-direction: row !important;
+   
+   
+}
+
+.content-display {
+    background: linear-gradient(135deg, #2e2e2e, #464133, #c2b280, #ddd0b0);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    padding: 20px;
+    color: #ddd0b0;
+    border: 2px solid rgba(210, 180, 140, 0.8); /* Sand-colored border */
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
+    max-width: 1000px;
+}
+
+
+
+
+.results-wrapper {
+    height: auto; /* Let it expand as needed */
+    max-height: 375px;
+    overflow-y: auto;
+   
+    border: 2px solid rgba(210, 180, 140, 0.8); /* Sand-colored border */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
+    margin: 20px 0;
+    width: 100%; /* Ensure it takes full width */
+}
+
+/* Sidebar link styles */
+.sidebar a {
+    display: block;
+    background: #504a3a; /* Dark gray background */
+    color: #ddd0b0; /* Sand text color */
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
+    margin-top: 20px;
+}
+
+.sidebar a:hover {
+    background: linear-gradient(135deg, #504a3a, #ddd0b0); /* Dark gray to light sand gradient */
+    color: #ffffff; /* White text on hover */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.8), 
+                0 0 20px rgba(210, 180, 140, 0.6), 
+                0 0 30px rgba(210, 180, 140, 0.5); /* Stronger sand glow */
+    transform: scale(1.05);
+}
+
+
+
+/* Custom scrollbar styling */
+.results-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.results-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ffffff; /* Gold */
+    border-radius: 4px;
+}
+
+/* Table for search results */
+.results-table {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    
+}
+
+.results-table th, .results-table td {
+    padding: 8px;
+    text-align: left;
+    background-color: rgba(12, 12, 12, 0.8); /* Dark background */
+    color: #ffffff;; /* Gold */
+}
+
+.results-table .item-cell {
+    display: flex;
+    align-items: center; /* Center vertically */
+    gap: 10px; /* Adjust gap as needed */
+    padding: 8px;
+}
+
+.results-table .item-cell a {
+    display: inline-block;
+    
+    text-decoration: none;
+    font-size: 1.1em;
+    vertical-align: middle; /* Align with icon */
+}
+
+
+.results-table .item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+
+
+
+/* Highlight selected row */
+.item-row {
+    background-color: rgba(50, 50, 50, 0.8); /* Dark gray */
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.item-row:hover {
+    background-color: rgba(100, 100, 100, 0.8); /* Light gray on hover */
+    color: #ddd0b0; /* Sand text */
+    box-shadow: 0 8px 16px rgba(210, 180, 140, 0.8); /* Sand shadow on hover */
+    transform: translateY(-3px);
+}
+
+/* Selected row with a stronger gradient */
+.selected-row {
+    background: linear-gradient(135deg, #504a3a, #ddd0b0); /* Dark gray to sand gradient */
+    border: 2px solid rgba(210, 180, 140, 1); /* Brighter sand border */
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.9), 0 0 30px rgba(210, 180, 140, 0.7); /* Strong sand glow */
+    transform: scale(1.02); /* Slight enlargement for visibility */
+}
+
+
+.details-wrapper {
+    margin: 0 auto;
+    max-width: 1420px;
+    min-width: 970px !important;
+    position: relative;
+    width: 95%;
+    display: none;
+}
+
+#details-container {
+    display: none;
+    width: 500px;
+    padding: 15px;
+    background-color: rgba(15, 15, 15, 0.95); /* Dark background */
+    color: #ffffff;; /* Gold */
+    border: 2px solid #ffd700; /* Gold */
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    margin-left: 5%;
+    margin-right: auto;
+    position: relative;
+    overflow: visible;
+}
+
+/* NPC info panel */
+.npc-info-panel {
+    position: relative;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #ffffff;; /* Gold */
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ffd700; /* Gold */
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);
+    overflow-y: auto;
+    display: none;
+    transition: all 0.5s ease;
+    
+}
+
+.npc-info-panel.open {
+    display: block;
+    position: relative;
+    width: 30%;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #ffffff;; /* Gold */
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ffd700; /* Gold */
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);
+    overflow-y: auto;
+    margin-left: 50px;
+    transition: all 0.5s ease
+}
+
+/* Pagination controls */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+    }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 10px;
+    }
+    .content-display {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .details-wrapper {
+        width: 100%;
+    }
+    .npc-info-panel {
+        width: 100%;
+    }
+}
+
+/* Additional color styling for item versions */
+.item-versions-horizontal {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    
+    margin-top: 20px;
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    z-index: 1001;
+    position: relative;
+}
+.details-wrapper {
+    margin: 0 auto;
+    max-width: 1420px;
+    min-width: 970px !important;
+    position: relative;
+    width: 95%;
+}
+
+#details-container {
+    display: none;
+    width: 500px;
+    padding: 15px;
+    background-color: rgba(30, 30, 30, 0.95); /* Darker background */
+    color: #ddd0b0; /* Sand text */
+    border: 2px solid #c4a484; /* Sand border */
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    margin-left: 5%;
+    margin-right: auto;
+    position: relative;
+    overflow: visible;
+}
+
+/* NPC info panel */
+.npc-info-panel {
+    position: relative;
+    width: 100%;
+    background-color: rgba(15, 15, 15, 0.9); /* Dark background */
+    color: #ddd0b0; /* Sand color */
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #c4a484; /* Sand border */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.6); /* Softer sand shadow */
+    overflow-y: auto;
+    display: none;
+    transition: all 0.5s ease;
+}
+
+.npc-info-panel.open {
+    display: block;
+    position: relative;
+    width: 100%;
+    background-color: rgba(15, 15, 15, 0.9); /* Dark background */
+    color: #ddd0b0; /* Sand text */
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #c4a484; /* Sand border */
+    box-shadow: 0 0 10px rgba(210, 180, 140, 0.6); /* Sand shadow */
+    margin-left: 50px;
+    transition: all 0.5s ease;
+}
+
+.item-version {
+    flex: 1;
+    min-width: 475px;
+    padding: 10px;
+    background-color: rgba(30, 30, 30, 0.95); /* Dark background */
+    color: #ddd0b0; /* Sand text */
+    border-radius: 8px;
+    border: 2px solid #c4a484; /* Sand border */
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.6); /* Sand shadow */
+    font-size: 0.85em;
+}
+
+.item-version h2 {
+    font-size: 1.4em;
+    color: #c4a484; /* Sand */
+    margin: 0;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #504a3a; /* Dark sand color */
+    color: #ffffff; /* White text */
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 1003;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.close-button:hover {
+    background-color: #e6be2d; /* Slightly brighter sand on hover */
+}
+
+
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.toggle-npc-info,
+.upgrade-path-button {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+#spell-search-container {
+    display: none;
+}
