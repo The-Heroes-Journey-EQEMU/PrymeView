@@ -1,9 +1,6 @@
 <?php
 // Database connection settings
-$host = '149.28.113.181:3306'; 
-$dbname = 'thj'; 
-$username = 'ro'; 
-$password = 'Rubber-Discussion-Extension-Sing-3'; 
+//removed db info for git
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
