@@ -2,13 +2,7 @@
 // Database connection settings
 //removed db info for git
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["error" => "Could not connect to the database"]);
-    exit;
-}
+include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
 
 $itemId = $_GET['id'] ?? null;
 

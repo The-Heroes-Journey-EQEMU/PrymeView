@@ -1,6 +1,10 @@
 <?php
 // Database connection settings
-//removed db info for git
+$host = 'ip:port';
+$dbname = 'dbname';
+$username = 'username';
+$password = 'password';
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
