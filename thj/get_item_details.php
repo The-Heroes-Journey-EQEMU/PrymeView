@@ -1,9 +1,6 @@
 <?php
 // Database connection settings
-$host = '149.28.117.25:16033'; 
-$dbname = 'content'; 
-$username = 'ro'; 
-$password = 'ro'; 
+//removed db info
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
