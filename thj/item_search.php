@@ -93,8 +93,8 @@ if (isset($_POST['search'])) {
         END AS Name,
         ac, hp, mana, endur, icon, classes, focuseffect, clickeffect 
     FROM items 
-    WHERE augtype = 0"; 
-    
+    WHERE 1=1"; 
+    // $sql = "SELECT ID, Name, ac, hp, mana, endur, icon, classes, focuseffect, clickeffect FROM items WHERE 1=1";
     $params = [];
         // Define valid comparison operators for safety
     $validComparisons = ['=', '>', '<', '>=', '<='];
