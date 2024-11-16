@@ -205,44 +205,15 @@ body {
     overflow: visible;
 }
 
-/* NPC info panel */
-.npc-info-panel {
-    position: relative;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #ffffff;; /* Gold */
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #ffd700; /* Gold */
-    box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);
-    overflow-y: auto;
-    display: none;
-    transition: all 0.5s ease;
-    
-}
 
-.npc-info-panel.open {
-    display: block;
-    position: relative;
-    width: 30%;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #ffffff;; /* Gold */
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #ffd700; /* Gold */
-    box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);
-    overflow-y: auto;
-    margin-left: 50px;
-    transition: all 0.5s ease
-}
 
 /* Pagination controls */
 .pagination-controls {
     display: flex;
     justify-content: space-between;
-    width: 100%;
     margin-top: 10px;
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -305,6 +276,7 @@ body {
 
 /* NPC info panel */
 .npc-info-panel {
+    margin-top: 10px;
     position: relative;
     width: 100%;
     background-color: rgba(15, 15, 15, 0.9); /* Dark background */
@@ -321,14 +293,14 @@ body {
 .npc-info-panel.open {
     display: block;
     position: relative;
-    width: 100%;
+    width: 95%;
     background-color: rgba(15, 15, 15, 0.9); /* Dark background */
     color: #ddd0b0; /* Sand text */
     padding: 15px;
     border-radius: 8px;
     border: 2px solid #c4a484; /* Sand border */
     box-shadow: 0 0 10px rgba(210, 180, 140, 0.6); /* Sand shadow */
-    margin-left: 50px;
+    
     transition: all 0.5s ease;
 }
 

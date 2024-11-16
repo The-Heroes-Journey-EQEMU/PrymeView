@@ -18,13 +18,24 @@ function loadItemDetails(itemId) {
 
             // Inject item details into the details container
             detailsContainer.innerHTML = `
-                <div class="item-version">
-                    ${generateTooltipContent(baseData)}
+            <div class="item-version">
+                ${generateTooltipContent(baseData)}
+            </div>
+            <div class="button-container">
+                <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
+                <button id="upgrade-path-button" class="upgrade-path-button">Upgrade Path</button>
+            </div>
+            <div class="npc-info-panel" id="npc-info-panel">
+                <div class="npc-info-content" id="npc-info-content">
+                    <!-- NPC info will be loaded here dynamically -->
                 </div>
-                <div class="button-container">
-                    <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
-                    <button id="upgrade-path-button" class="upgrade-path-button">Upgrade Path</button>
+                <div class="pagination-controls">
+                    <button id="prev-page" disabled>&laquo; Prev</button>
+                    <button id="next-page">Next &raquo;</button>
                 </div>
+            </div>
+            </div>
+        
             `;
             /* // Call function to position the upgrade tab in the middle
             positionUpgradeTab(); // Call this after the content is injected */
@@ -135,9 +146,13 @@ let currentPage = 1;
 const itemsPerPage = 4; // Adjust if you want more NPCs per page
 let npcData = []; // This will store the fetched NPC data
 
-// Function to toggle NPC info panel and load NPCs
 function toggleNpcInfo(itemId) {
     const npcInfoPanel = document.getElementById('npc-info-panel');
+
+    if (!npcInfoPanel) {
+        console.error("NPC Info Panel not found in the DOM.");
+        return;
+    }
 
     // If panel is already open, close it
     if (npcInfoPanel.classList.contains('open')) {
@@ -149,13 +164,17 @@ function toggleNpcInfo(itemId) {
     fetch(`item_detail.php?id=${itemId}&npc_info=true`)
         .then(response => response.json())
         .then(data => {
-            npcData = data.npc_info; // Store the fetched NPC data
+            npcData = data.npc_info || []; // Store the fetched NPC data
 
-            if (npcData && npcData.length > 0) {
-                // Load the first page of NPC data
-                displayNpcPage(currentPage);
-            } else {
-                document.getElementById('npc-info-content').innerHTML = '<p>No NPCs found for this item.</p>';
+            const npcInfoContent = document.getElementById('npc-info-content');
+            if (npcInfoContent) {
+                if (npcData.length > 0) {
+                    // Initialize pagination at page 1
+                    currentPage = 1;
+                    displayNpcPage(currentPage);
+                } else {
+                    npcInfoContent.innerHTML = '<p>No NPCs found for this item.</p>';
+                }
             }
 
             // Show the NPC info panel
@@ -164,12 +183,41 @@ function toggleNpcInfo(itemId) {
         .catch(error => {
             console.error('Error fetching NPC info:', error);
         });
+
+    // Attach event listeners for pagination buttons
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+
+    if (prevPageButton) {
+        prevPageButton.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayNpcPage(currentPage);
+            }
+        };
+    }
+
+    if (nextPageButton) {
+        nextPageButton.onclick = () => {
+            if (currentPage * itemsPerPage < npcData.length) {
+                currentPage++;
+                displayNpcPage(currentPage);
+            }
+        };
+    }
 }
 
-// Function to display NPCs based on the current page
+
+
 function displayNpcPage(page) {
     const npcInfoContent = document.getElementById('npc-info-content');
-    npcInfoContent.innerHTML = ''; // Clear previous content
+    if (!npcInfoContent) {
+        console.error("NPC Info Content not found in the DOM.");
+        return;
+    }
+
+    // Clear previous content
+    npcInfoContent.innerHTML = '';
 
     // Calculate start and end indices for slicing the data
     const start = (page - 1) * itemsPerPage;
@@ -177,34 +225,56 @@ function displayNpcPage(page) {
     const pageData = npcData.slice(start, end); // Get the current page data
 
     // Display the NPCs for the current page
-    npcInfoContent.innerHTML = pageData.map(npc => `
-        <div class="npc-entry">
-            <p><strong>NPC Name:</strong> ${npc.npc_name}</p>
-            <p><strong>Zone:</strong> ${npc.zone}</p>
-            <p><strong>Chance to Drop:</strong> ${npc.drop_chance}%</p>
-        </div>
-    `).join('');
+    if (pageData.length > 0) {
+        npcInfoContent.innerHTML = pageData.map(npc => `
+            <div class="npc-entry">
+                <p><strong>NPC Name:</strong> ${npc.npc_name}</p>
+                <p><strong>Zone:</strong> ${npc.zone}</p>
+                <p><strong>Chance to Drop:</strong> ${npc.drop_chance}%</p>
+            </div>
+        `).join('');
+    } else {
+        npcInfoContent.innerHTML = '<p>No NPCs available for this page.</p>';
+    }
 
-    // Update pagination buttons based on the current page
-    document.getElementById('prev-page').disabled = page === 1;
-    document.getElementById('next-page').disabled = end >= npcData.length;
+    // Update pagination buttons
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+
+    if (prevPageButton) {
+        prevPageButton.disabled = page === 1; // Disable if on the first page
+    }
+
+    if (nextPageButton) {
+        nextPageButton.disabled = end >= npcData.length; // Disable if on the last page
+    }
 }
 
 
-// Event listeners for pagination controls
-document.getElementById('prev-page').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        displayNpcPage(currentPage);
-    }
-});
 
-document.getElementById('next-page').addEventListener('click', () => {
-    if (currentPage * itemsPerPage < npcData.length) {
-        currentPage++;
-        displayNpcPage(currentPage);
+document.addEventListener('DOMContentLoaded', () => {
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayNpcPage(currentPage);
+            }
+        });
+    }
+
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', () => {
+            if (currentPage * itemsPerPage < npcData.length) {
+                currentPage++;
+                displayNpcPage(currentPage);
+            }
+        });
     }
 });
+;
 
 // Event listener setup for clicking on item rows
 document.addEventListener('DOMContentLoaded', function() {

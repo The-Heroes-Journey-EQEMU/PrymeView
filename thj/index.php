@@ -52,21 +52,7 @@
             
         </div>
         
-        <!-- NPC info sliding panel with a toggle button -->
-        <div class="npc-info-panel" id="npc-info-panel">
-            <div class="npc-info-header">
-                <!-- Button to toggle the NPC info panel -->
-                <button class="toggle-npc-info">&larr; View NPC Info</button>
-            </div>
-            <div class="npc-info-content" id="npc-info-content">
-                <!-- NPC info will be loaded here dynamically -->
-            </div>
-            
-            <div class="pagination-controls">
-                <button id="prev-page" disabled>&laquo; Prev</button>
-                <button id="next-page">Next &raquo;</button>
-            </div>
-        </div>
+        
     </div>
 </div>
 
