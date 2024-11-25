@@ -90,7 +90,7 @@ if ($itemId) {
             $item['classes'] = decodeClasses($item['classes']);
 
             // Add full icon path for front-end use
-            $item['icon_path'] = $item['icon'] ? "/thj/images/icons/{$item['icon']}.png" : "/thj/images/icons/default_icon.png";
+            $item['icon_path'] = $item['icon'] ? "/images/icons/{$item['icon']}.png" : "/images/icons/default_icon.png";
 
             // Fetch spell details for item spells, with existence check to avoid warnings
             $spells = [
