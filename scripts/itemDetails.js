@@ -96,7 +96,7 @@ function loadUpgradePath(itemId) {
                         <div class="item-version enchanted-glow">
                             ${generateTooltipContent(enchantedData)}
                         </div>
-                        <img src="/thj/images/icons/upgradearrow.png" alt="Upgrade Arrow" class="upgrade-arrow">
+                        <img src="/images/icons/upgradearrow.png" alt="Upgrade Arrow" class="upgrade-arrow">
                         <div class="item-version legendary-glow">
                             ${generateTooltipContent(legendaryData)}
                             <div class="sparkle sparkle-1"></div>
