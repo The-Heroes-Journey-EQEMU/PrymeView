@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THJ Charbrowse</title>
-    <link rel="stylesheet" href="/thj/css/styles.css">
-    <link rel="stylesheet" href="/thj/sprites/item_icons.css">
-    <link rel="stylesheet" href="/thj/css/tooltip.css">
-    <link rel="stylesheet" href="/thj/css/expansion_enable.css">
-    <link rel="stylesheet" href="/thj/sprites/spell_icons/spell_icons_20.css">
-    <link rel="stylesheet" href="/thj/sprites/spell_icons/spell_icons_30.css">
-    <link rel="stylesheet" href="/thj/sprites/spell_icons/spell_icons_40.css">
-    <link rel="stylesheet" href="/thj/css/spell_search.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/sprites/item_icons.css">
+    <link rel="stylesheet" href="/css/tooltip.css">
+    <link rel="stylesheet" href="/css/expansion_enable.css">
+    <link rel="stylesheet" href="/sprites/spell_icons/spell_icons_20.css">
+    <link rel="stylesheet" href="/sprites/spell_icons/spell_icons_30.css">
+    <link rel="stylesheet" href="/tsprites/spell_icons/spell_icons_40.css">
+    <link rel="stylesheet" href="/css/spell_search.css">
     
     
 
@@ -61,12 +61,12 @@
 <div id="tooltip" class="tooltip"></div>
 
 <!-- Scripts -->
-<script src="/thj/scripts/scripts.js"></script>
-<script src="/thj/scripts/itemDetails.js"></script>
-<script src="/thj/scripts/hoverTool.js"></script>
+<script src="/scripts/scripts.js"></script>
+<script src="/scripts/itemDetails.js"></script>
+<script src="/scripts/hoverTool.js"></script>
 <!-- <script src="/thj/scripts/randombackground.js"></script> -->
-<script src="/thj/scripts/focusEffects.js"></script>
-<script src="/thj/scripts/spellSearch.js"></script>
+<script src="/scripts/focusEffects.js"></script>
+<script src="/scripts/spellSearch.js"></script>
 
 
 </body>
