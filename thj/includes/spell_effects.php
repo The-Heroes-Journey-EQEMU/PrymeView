@@ -46,27 +46,38 @@ function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracen
                     $print_buffer .= ($max < 100) ? "Decrease Attack Speed" : "Increase Attack Speed";
                     $print_buffer .= " by " . ($min != $max ? abs(100 - $min) . "% to " . abs(100 - $max) . "%" : abs(100 - $max) . "%") . " (Max: $effect_limit)";
                     break;
-
-                case 32: // Summon Item effect
-                    $item_id = $spell["effect_base_value$n"];
-                    $item_data = getItemData($item_id);
+                
+                    case 32: // Summon Item effect
+                        $item_id = $spell["effect_base_value$n"];
+                        $item_data = getItemData($item_id);
                     
-                    if ($item_data) {
-                        $item_name = htmlspecialchars($item_data['name']);
-                        $item_class = "item-" . htmlspecialchars($item_data['icon']);
-                        
-                        $print_buffer .= "
-                            Summon Item: 
-                            <div class='$item_class hover-image spell-item' 
-                                 style='height: 40px; width: 40px; display: inline-block; background-image: url(/thj/sprites/item_icons.png);' 
-                                 title='$item_name' 
-                                 data-item-id='$item_id'></div>
-                            <a href='#' onclick='showSpellModal($item_id); return false;' data-item-id='$item_id'>$item_name</a>
-                        ";
-                    } else {
-                        $print_buffer .= "Summon Item: Unknown Item (ID: $item_id)";
-                    }
-                    break;
+                        if ($item_data) {
+                            $item_name = htmlspecialchars($item_data['name']);
+                            $icon_class = "item-" . htmlspecialchars($item_data['icon']); // Ensure matching class
+                    
+                            // Render the item with the correct classes and structure
+                            $print_buffer .= "
+                                <li class='item-row'>
+                                    <div class='item-content'>
+                                        <div class='$icon_class hover-image' 
+                                             style='display: inline-block; height: 40px; width: 40px;' 
+                                             data-item-id='$item_id' 
+                                             title='$item_name'>
+                                        </div>
+                                        <span class='item-name'>$item_name</span>
+                                    </div>
+                                </li>
+                            ";
+                    
+                        } else {
+                            $print_buffer .= "Summon Item: Unknown Item (ID: $item_id)";
+                        }
+                        break;
+                    
+                    
+                    
+                    
+                    
 
                 case 21:
                     $print_buffer .= $dbspelleffects[$spell["effectid$n"]] ?? $effect_placeholder;
@@ -90,22 +101,33 @@ function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracen
 
 function getItemData($item_id) {
     global $pdo;
-    $stmt = $pdo->prepare("SELECT name, icon FROM items WHERE id = :item_id");
+    $stmt = $pdo->prepare("
+        SELECT 
+            id, 
+            icon, 
+            CASE
+                WHEN name LIKE 'Apocryphal%' THEN REPLACE(name, 'Apocryphal', 'Legendary')
+                WHEN name LIKE 'Rose Colored%' THEN REPLACE(name, 'Rose Colored', 'Enchanted')
+                ELSE name
+            END AS name,
+             
+            weight, 
+            slots, 
+            races, 
+            classes 
+        FROM items 
+        WHERE id = :item_id
+    ");
     $stmt->bindValue(':item_id', $item_id, PDO::PARAM_INT);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($item) {
-        // Check if icon file exists, use default if not
-        $icon_path = "/thj/images/icons/{$item['icon']}.png";
-        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $icon_path)) {
-            $icon_path = "/thj/images/icons/default.png"; // Default icon
-        }
-        $item['icon_path'] = $icon_path;
-        $item['description'] = "Description text goes here";
+        $item['icon_class'] = "item-" . htmlspecialchars($item['icon']);
     }
 
     return $item;
 }
+
 
 ?>

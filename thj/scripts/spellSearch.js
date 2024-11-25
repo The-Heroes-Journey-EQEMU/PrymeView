@@ -1,5 +1,12 @@
 // Function to load content for the spell search
+document.addEventListener('DOMContentLoaded', () => {
+    // Apply hover listeners globally when the page loads
+    setupItemHoverListener();
+});
+
 function loadContentForSpellSearch(page) {
+    clearSpellSearchSessionStorage(); // Clear spell-related session storage
+
     const contentDisplay = document.getElementById('content-display');
     const detailsContainer = document.getElementById('details-container');
     const spellsWrapper = document.getElementById('spells-wrapper');
@@ -38,6 +45,7 @@ function loadContentForSpellSearch(page) {
         });
 }
 
+
 // Attach search listener for spell search form submission
 function attachSpellSearchListener(spellSearchForm) {
     spellSearchForm.removeEventListener('submit', handleSpellSearch);
@@ -48,36 +56,43 @@ function attachSpellSearchListener(spellSearchForm) {
         const searchQueryElement = document.querySelector('input[name="name"]');
         const selectedClassesElement = document.getElementById('selectedSpellClasses');
         const selectedLevelElement = document.querySelector('select[name="level"]');
-
-        if (!searchQueryElement || !selectedClassesElement || !selectedLevelElement) {
+        const levelFilterElement = document.querySelector('select[name="level_filter"]'); // New dropdown for level filter
+    
+        if (!searchQueryElement || !selectedClassesElement || !selectedLevelElement || !levelFilterElement) {
             console.error("Required form elements for spell search are missing.");
             return;
         }
-
+    
         const searchQuery = searchQueryElement.value.trim();
         const selectedClasses = selectedClassesElement.value;
         const selectedLevel = selectedLevelElement.value;
-
+        const levelFilter = levelFilterElement.value;
+    
         if (!searchQuery && selectedClasses === '' && selectedLevel === '') {
             alert('Please enter a search term, select a class, or choose a level.');
             return;
         }
-
+    
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `spell_search.php?name=${encodeURIComponent(searchQuery)}&types=${encodeURIComponent(selectedClasses)}&level=${encodeURIComponent(selectedLevel)}`, true);
-
+        xhr.open(
+            'POST',
+            `spell_search.php?name=${encodeURIComponent(searchQuery)}&types=${encodeURIComponent(selectedClasses)}&level=${encodeURIComponent(selectedLevel)}&level_filter=${encodeURIComponent(levelFilter)}`,
+            true
+        );
+    
         xhr.onload = function () {
             const spellSearchContainer = document.getElementById('spell-search-container');
             spellSearchContainer.innerHTML = xhr.status === 200 ? xhr.responseText : 'Error loading spell search results.';
             setupSpellSearchListeners();
             const newSearchForm = document.querySelector('#spellSearchForm');
             if (newSearchForm) attachSpellSearchListener(newSearchForm);
-
+    
             restoreSpellClassSelection();
         };
-
+    
         xhr.send();
     }
+    
 }
 
 // Set up listeners specific to spell search
@@ -100,33 +115,36 @@ function handleSpellClassSelection(event) {
     selectSpellClass(classId, event);
 }
 
-let selectedClasses = []; // Array to hold selected class IDs
+let selectedSpellClasses = []; // Array to hold selected class IDs
 
 function selectSpellClass(classId, event) {
     console.log("Class selected:", classId);
 
-    if (selectedClasses.includes(classId)) {
-        selectedClasses = selectedClasses.filter(id => id !== classId);
+    if (selectedSpellClasses.includes(classId)) {
+        // Remove the class from the selected list
+        selectedSpellClasses = selectedSpellClasses.filter(id => id !== classId);
         event.currentTarget.classList.remove('selected');
     } else {
-        if (selectedClasses.length < 3) {
-            selectedClasses.push(classId);
+        if (selectedSpellClasses.length < 3) {
+            // Add the class to the selected list
+            selectedSpellClasses.push(classId);
             event.currentTarget.classList.add('selected');
         } else {
-            alert("You can select up to 3 classes only.");
+            alert("You can select up to 3 classes only."); // Restrict selection to a maximum of 3
             return;
         }
     }
 
+    // Update the hidden input field for selected classes
     const selectedSpellClassesElement = document.getElementById('selectedSpellClasses');
     if (selectedSpellClassesElement) {
-        selectedSpellClassesElement.value = selectedClasses.join(',');
-    } else {
-        console.error("Hidden input field for selected classes not found.");
+        selectedSpellClassesElement.value = selectedSpellClasses.join(',');
     }
 
-    sessionStorage.setItem('selectedSpellClasses', selectedClasses.join(','));
+    // Save the selection to session storage (optional)
+    sessionStorage.setItem('selectedSpellClasses', selectedSpellClasses.join(','));
 }
+
 
 // Restore selection on page load
 function restoreSpellClassSelection() {
@@ -148,40 +166,213 @@ function restoreSpellClassSelection() {
 
 document.addEventListener('DOMContentLoaded', restoreSpellClassSelection);
 
-// Updated modal loading logic
-function showSpellModal(itemId) {
-    const modal = document.getElementById('spellModal');
-    const modalContent = document.getElementById('spellModalContent');
-    
-    if (!modal || !modalContent) {
-        console.error("Modal elements not found.");
+
+window.showSpellDetails = function (spellId) {
+    // Find the row where the click occurred
+    const clickedRow = document.querySelector(`.spell-row[data-id="${spellId}"]`);
+    if (!clickedRow) {
+        console.error("Clicked row not found for spell ID:", spellId);
         return;
     }
 
-    modal.style.display = 'block';
-    modalContent.innerHTML = "Loading...";
+    // Check if a detail panel already exists
+    let detailPanel = clickedRow.nextElementSibling;
+    if (detailPanel && detailPanel.classList.contains('spell-detail-row')) {
+        // If the panel already exists, toggle it
+        detailPanel.classList.toggle('open');
+        return;
+    }
 
-    fetch(`/thj/item_detail.php?id=${itemId}`) // Update URL to match correct path
+    // Remove any existing detail panels
+    document.querySelectorAll('.spell-detail-row').forEach(panel => panel.remove());
+
+    // Create a new detail panel row
+    detailPanel = document.createElement('tr');
+    detailPanel.className = 'spell-detail-row';
+    detailPanel.innerHTML = `
+        <td colspan="8">
+            <div class="spell-detail-panel-content">Loading...</div>
+        </td>
+    `;
+
+    // Insert the detail panel row after the clicked row
+    clickedRow.parentNode.insertBefore(detailPanel, clickedRow.nextSibling);
+
+    fetch(`/thj/spell_detail.php?id=${spellId}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(html => {
+        console.log("Fetched HTML:", html); // Debug log
+        const content = detailPanel.querySelector('.spell-detail-panel-content');
+        if (!content) {
+            console.error("Content element not found in detail panel.");
+            return;
+        }
+        content.innerHTML = html; // Populate the panel
+        detailPanel.classList.add('open'); // Expand the panel
+    })
+    .catch(error => {
+        console.error('Error fetching spell details:', error);
+        detailPanel.querySelector('.spell-detail-panel-content').innerHTML = 'Error loading details.';
+    });
+
+};
+
+
+function loadVendors() {
+    console.log("Loading vendors...");
+    const spellDetailContainer = document.querySelector('.spell-detail-container');
+    const spellId = spellDetailContainer?.getAttribute('data-spell-id');
+
+    if (!spellId) {
+        console.error("Spell ID is missing in loadVendors.");
+        return;
+    }
+
+    console.log("Spell ID in loadVendors:", spellId);
+
+    const vendorResults = document.getElementById('vendorResults');
+
+    fetch(`/thj/get_spell_vendors.php?id=${spellId}`)
         .then(response => response.json())
         .then(data => {
+            console.log("Vendor data:", data);
             if (data.error) {
-                throw new Error(data.error);
+                vendorResults.innerHTML = `<li>${data.error}</li>`;
+            } else if (data.length > 0) {
+                // Group vendors by zone
+                const vendorsByZone = data.reduce((acc, vendor) => {
+                    if (!acc[vendor.zone_name]) {
+                        acc[vendor.zone_name] = [];
+                    }
+                    const x = isNaN(parseFloat(vendor.x)) ? 0.00 : parseFloat(vendor.x).toFixed(2);
+                    const y = isNaN(parseFloat(vendor.y)) ? 0.00 : parseFloat(vendor.y).toFixed(2);
+                    const z = isNaN(parseFloat(vendor.z)) ? 0.00 : parseFloat(vendor.z).toFixed(2);
+                    const formattedLocation = `X: ${x}, Y: ${y}, Z: ${z}`;
+                    acc[vendor.zone_name].push({
+                        name: vendor.npc_name,
+                        location: formattedLocation
+                    });
+                    return acc;
+                }, {});
+
+                vendorResults.innerHTML = Object.entries(vendorsByZone)
+                .map(([zone, vendors]) => `
+                    <li>
+                        <strong class="zone-name">${zone}</strong>
+                        <ul class="zone-vendors">
+                            ${vendors.map(vendor => `
+                                <li class="vendor-name">
+                                    ${vendor.name} <span class="vendor-location">(Location: ${vendor.location})</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </li>
+                `)
+                .join('');
+            } else {
+                vendorResults.innerHTML = '<li>No vendors found for this spell.</li>';
             }
-            modalContent.innerHTML = `
-                <h2>${data.name}</h2>
-                <img src="${data.icon_path}" alt="${data.name}" class="tooltip-item-icon">
-                <p>${data.description}</p>
-            `;
         })
         .catch(error => {
-            console.error("Error loading item details:", error);
-            modalContent.innerHTML = "Error loading item details.";
+            console.error('Error loading vendors:', error);
+            vendorResults.innerHTML = '<li>Error loading vendor data.</li>';
         });
 }
 
-function closeModal() {
-    const modal = document.getElementById('spellModal');
-    if (modal) {
-        modal.style.display = 'none';
+
+
+
+
+function loadItemsWithEffect() {
+    console.log("Loading items with this effect...");
+    const spellDetailContainer = document.querySelector('.spell-detail-container');
+    const spellId = spellDetailContainer?.getAttribute('data-spell-id');
+
+    if (!spellId) {
+        console.error("Spell ID is missing in loadItemsWithEffect.");
+        return;
+    }
+
+    console.log("Spell ID in loadItemsWithEffect:", spellId);
+
+    const itemResults = document.getElementById('itemResults');
+
+    fetch(`/thj/get_items_with_effect.php?id=${spellId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Item data:", data);
+            if (data.error) {
+                itemResults.innerHTML = `<li>${data.error}</li>`;
+            } else if (data.length > 0) {
+                // Render item rows
+                itemResults.innerHTML = data.map(item => {
+                    const classes = item.classes ? `<span class="item-classes">${item.classes}</span>` : ''; // Check if classes are available
+                    return `
+                        <li class="item-row">
+                            <div class="item-content">
+                                <div class="${item.icon_class} hover-image" 
+                                     style="display: inline-block; height: 40px; width: 40px;" 
+                                     data-item-id="${item.id}"
+                                     title="${item.name}">
+                                </div>
+                                <span class="item-name">${item.name}</span>
+                                ${classes ? `<div class="item-class">${classes}</div>` : ''}
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+
+                // Initialize tooltip on newly added items
+                setupItemHoverListener();
+            } else {
+                itemResults.innerHTML = '<li>No items found with this effect.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading items:', error);
+            itemResults.innerHTML = '<li>Error loading item data.</li>';
+        });
+}
+
+function openTab(event, tabId) {
+    console.log("Tab clicked:", tabId);
+
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Show the selected tab and mark the button as active
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    // Trigger additional actions for specific tabs
+    if (tabId === 'vendors') {
+        loadVendors();
+    } else if (tabId === 'items') {
+        loadItemsWithEffect();
     }
 }
+
+function clearSpellSearchSessionStorage() {
+    const keysToClear = ['selectedSpellClasses', 'spellSearchQuery'];
+    keysToClear.forEach(key => sessionStorage.removeItem(key));
+}
+
+function resetSpellSearchState() {
+    selectedSpellClasses = []; // Reset spell-specific classes
+}
+
+
+
+

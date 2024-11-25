@@ -1,8 +1,17 @@
 <?php
 // Database connection settings
-//removed db info for git
+$host = '149.28.117.25:16033';
+$dbname = 'content';
+$username = 'ro';
+$password = 'ro';
 
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo json_encode(["error" => "Could not connect to the database"]);
+    exit;
+}
 
 $itemId = $_GET['id'] ?? null;
 

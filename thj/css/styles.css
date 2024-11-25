@@ -5,15 +5,15 @@ body, html {
     padding: 0;
 }
 
-/* Body background with centered logo */
 body {
-    
-    background-size:cover;
+    background-image: url("/thj/images/backgrounds/thjlogopic.png");
+    background-size: 100% 100%; /* Stretches the image */
     background-position: center;
     background-repeat: no-repeat;
     color: #ffffff; /* Gold */
     overflow-x: hidden; /* Prevents horizontal scroll */
 }
+
 
 /* Sidebar styling */
 .sidebar {

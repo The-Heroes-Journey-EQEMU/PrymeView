@@ -86,14 +86,17 @@ if (isset($_POST['search'])) {
     $augSearchEnabled = isset($_POST['enableAug']) ? $_POST['enableAug'] : false;
 
     $sql = "SELECT ID, 
-        CASE 
-            WHEN Name LIKE 'Apocryphal%' THEN REPLACE(Name, 'Apocryphal', 'Legendary')
-            WHEN Name LIKE 'Rose Colored%' THEN REPLACE(Name, 'Rose Colored', 'Enchanted')
-            ELSE Name
-        END AS Name,
-        ac, hp, mana, endur, icon, classes, focuseffect, clickeffect 
-    FROM items 
-    WHERE 1=1"; 
+    CASE 
+        WHEN Name LIKE 'Apocryphal%' THEN REPLACE(Name, 'Apocryphal', 'Legendary')
+        WHEN Name LIKE 'Rose Colored%' THEN REPLACE(Name, 'Rose Colored', 'Enchanted')
+        ELSE Name
+    END AS Name,
+    ac, hp, mana, endur, icon, classes, focuseffect, clickeffect,
+    astr, asta, adex, aagi, aint, awis, acha
+FROM items 
+WHERE 1=1";
+
+ 
     // $sql = "SELECT ID, Name, ac, hp, mana, endur, icon, classes, focuseffect, clickeffect FROM items WHERE 1=1";
     $params = [];
         // Define valid comparison operators for safety
@@ -541,7 +544,14 @@ if (isset($_POST['search'])) {
                 <th>Name</th>
                 <th>AC</th>
                 <th>HP</th>
-                <th>Mana</th>
+                <th>MANA</th>
+                <th>STR</th>
+                <th>STA</th>
+                <th>DEX</th>
+                <th>AGI</th>
+                <th>INT</th>
+                <th>WIS</th>
+                <th>CHA</th>
                 <th>Classes</th>
             </tr>
         </thead>
@@ -557,6 +567,13 @@ if (isset($_POST['search'])) {
                     <td><?php echo htmlspecialchars($item['ac']); ?></td>
                     <td><?php echo htmlspecialchars($item['hp']); ?></td>
                     <td><?php echo htmlspecialchars($item['mana']); ?></td>
+                    <td><?php echo htmlspecialchars($item['astr']); ?></td>
+                    <td><?php echo htmlspecialchars($item['asta']); ?></td>
+                    <td><?php echo htmlspecialchars($item['adex']); ?></td>
+                    <td><?php echo htmlspecialchars($item['aagi']); ?></td>
+                    <td><?php echo htmlspecialchars($item['aint']); ?></td>
+                    <td><?php echo htmlspecialchars($item['awis']); ?></td>
+                    <td><?php echo htmlspecialchars($item['acha']); ?></td>
                     <td><?php echo htmlspecialchars(getClassAbbreviations($item['classes'])); ?></td>
                 </tr>
             <?php endforeach; ?>

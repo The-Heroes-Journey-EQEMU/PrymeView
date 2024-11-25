@@ -18,52 +18,63 @@ $max_items_returned = 100;
 // Capture query parameters
 $namestring = $_GET['name'] ?? '';
 $level = $_GET['level'] ?? 0;
+$level_filter = $_GET['level_filter'] ?? 'only'; // Default to "only"
 $types = isset($_GET['types']) ? explode(',', $_GET['types']) : [];
 
-// Get columns based on selected classes
-$class_columns = array_intersect_key($classColumnMapping, array_flip(array_slice($types, 0, 3)));
+// Get class columns for the selected classes
+$class_columns = array_intersect_key($classColumnMapping, array_flip($types));
 $selected_columns = array_values($class_columns);
 
+// Handle `min_level` calculation dynamically
+if (!empty($selected_columns)) {
+    $min_level_expr = count($selected_columns) === 1
+        ? $selected_columns[0]
+        : "LEAST(" . implode(", ", $selected_columns) . ")";
+} else {
+    $min_level_expr = "255"; // Default when no classes are selected
+}
+
 // Display the form
-echo '
+?>
 <div class="spell-search" id="spell-search">
-    <form id="spellSearchForm" action="spell_search.php" method="POST">
+    <form id="spellSearchForm" action="spell_search.php" method="GET">
         <table class="spell-form-table">
             <tr>
                 <td colspan="2">
-                    <div id="spellClassSelection" class="spell-class-selection">';
-
-foreach ($classColumnMapping as $classId => $classColumn) {
-    if (isset($classes[$classId])) {
-        $classInfo = $classes[$classId];
-        echo '
-            <div class="spell-class-icon-container" data-class-id="' . $classId . '" onclick="selectSpellClass(' . $classId . ', event)">
-                <div class="spell-class-abbreviation">' . $classInfo['abbreviation'] . '</div>
-                <div class="spell-class-icon item-' . $classInfo['image'] . '" title="' . $classInfo['fullName'] . '"></div>
-            </div>';
-    }
-}
-
-echo '
+                    <div id="spellClassSelection" class="spell-class-selection">
+                        <?php foreach ($classColumnMapping as $classId => $classColumn): ?>
+                            <?php if (isset($classes[$classId])): ?>
+                                <?php $classInfo = $classes[$classId]; ?>
+                                <div class="spell-class-icon-container" data-class-id="<?= $classId ?>" onclick="selectSpellClass(<?= $classId ?>, event)">
+                                    <div class="spell-class-abbreviation"><?= $classInfo['abbreviation'] ?></div>
+                                    <div class="spell-class-icon item-<?= $classInfo['image'] ?>" title="<?= $classInfo['fullName'] ?>"></div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
-                    <input type="hidden" name="types" id="selectedSpellClasses" value="' . implode(",", $types) . '">
+                    <input type="hidden" name="types" id="selectedSpellClasses" value="<?= implode(",", $types) ?>">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="level-container">
+                        <select name="level" class="spell-custom-level-dropdown">
+                            <option value="">Select Level</option>
+                            <?php for ($i = 1; $i <= $server_max_level; $i++): ?>
+                                <option value="<?= $i ?>" <?= ($level == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <select name="level_filter" class="spell-custom-level-filter">
+                            <option value="only" <?= ($level_filter === 'only') ? 'selected' : '' ?>>Only</option>
+                            <option value="and_higher" <?= ($level_filter === 'and_higher') ? 'selected' : '' ?>>And Higher</option>
+                            <option value="and_lower" <?= ($level_filter === 'and_lower') ? 'selected' : '' ?>>And Lower</option>
+                        </select>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="level" class="spell-custom-level-dropdown">
-                        <option value="">Select Level</option>';
-
-for ($i = 1; $i <= $server_max_level; $i++) {
-    echo '<option value="' . $i . '"' . ($level == $i ? ' selected="selected"' : '') . '>' . $i . '</option>';
-}
-
-echo '          </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type="text" name="name" class="spell-search-input" size="40" value="' . htmlspecialchars($namestring) . '" />
+                    <input type="text" name="name" class="spell-search-input" size="40" value="<?= htmlspecialchars($namestring) ?>" />
                 </td>
             </tr>
             <tr>
@@ -74,26 +85,34 @@ echo '          </select>
             </tr>
         </table>
     </form>
-</div>';
+</div>
 
+<?php
 // Execute the spell search if filters are provided
 if ($namestring !== '' || $level != 0 || !empty($types)) {
-    $sql = "SELECT *, LEAST(" . implode(", ", array_map(fn($col) => "GREATEST($col, 0)", $selected_columns)) . ") AS spell_level
-            FROM spells_new
-            WHERE 1=1";
+    $sql = "SELECT *, {$min_level_expr} AS min_level FROM spells_new WHERE 1=1";
 
-    if (!empty($types)) {
+    // Add class-based conditions
+    if (!empty($selected_columns)) {
         $class_conditions = [];
-        foreach ($class_columns as $col) {
+        foreach ($selected_columns as $col) {
             $class_conditions[] = "$col <= :max_level AND $col != 255";
         }
         $sql .= " AND (" . implode(' OR ', $class_conditions) . ")";
     }
 
+    // Add level filter
     if ($level != 0) {
-        $sql .= " AND LEAST(" . implode(", ", array_map(fn($col) => "GREATEST($col, 0)", $selected_columns)) . ") <= :level";
+        if ($level_filter === 'only') {
+            $sql .= " AND {$min_level_expr} = :level";
+        } elseif ($level_filter === 'and_higher') {
+            $sql .= " AND {$min_level_expr} >= :level";
+        } elseif ($level_filter === 'and_lower') {
+            $sql .= " AND {$min_level_expr} <= :level";
+        }
     }
 
+    // Add name filter
     if ($namestring) {
         $sql .= " AND name LIKE :name";
     }
@@ -111,9 +130,8 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
     $placeholders = implode(',', array_map(fn($i) => ":excluded_$i", array_keys($excluded_spells)));
     $sql .= " AND name NOT IN ($placeholders)";
 
-    $sql .= " GROUP BY name ORDER BY spell_level, name LIMIT :max_items";
+    $sql .= " GROUP BY name ORDER BY min_level, name LIMIT :max_items";
 
-    // Prepare and execute the query
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':max_level', $server_max_level, PDO::PARAM_INT);
     if ($level != 0) {
@@ -124,7 +142,6 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
     }
     $stmt->bindValue(':max_items', $max_items_returned, PDO::PARAM_INT);
 
-    // Bind excluded spell names
     foreach ($excluded_spells as $index => $spell_name) {
         $stmt->bindValue(":excluded_$index", $spell_name, PDO::PARAM_STR);
     }
@@ -132,6 +149,7 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
     $stmt->execute();
     $spells = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Render results
     if ($spells) {
         echo '<div class="spell-results-container">';
         echo '<table class="spell-results">';
@@ -139,19 +157,16 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
 
         $currentLevel = -1;
         foreach ($spells as $spell) {
-            $spellLevel = $spell['spell_level'];
+            $spellLevel = $spell['min_level'];
             if ($spellLevel != $currentLevel) {
                 $currentLevel = $spellLevel;
                 echo "<tr><td colspan='8'><strong>Level $currentLevel Spells</strong></td></tr>";
             }
 
             $icon_class = "spell-" . $spell['new_icon'] . "-40";
-
-            // Combine icon and name in the same cell with a click event to show modal
             $icon_and_name = '<span class="' . $icon_class . '" style="display: inline-block; height: 40px; width: 40px;"></span> ';
-            $icon_and_name .= '<a href="javascript:void(0);" onclick="showSpellModal(' . $spell['id'] . ')">' . htmlspecialchars($spell['name']) . '</a>';
+            $icon_and_name .= htmlspecialchars($spell['name']);
 
-            // Display class icons for each selected class with level annotations
             $classIcons = '';
             foreach ($class_columns as $classCol) {
                 if ($spell[$classCol] <= $server_max_level && $spell[$classCol] != 255) {
@@ -166,10 +181,9 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
                 }
             }
 
-            // Use displaySpellEffects to generate the effects description
             $effects = displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbraces, $server_max_level);
 
-            echo '<tr>';
+            echo '<tr class="spell-row" data-id="' . $spell['id'] . '" onclick="showSpellDetails(' . $spell['id'] . ')">';
             echo '<td>' . $icon_and_name . '</td>';
             echo '<td>' . $classIcons . '</td>';
             echo '<td>' . $effects . '</td>';
@@ -188,9 +202,9 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
 }
 ?>
 
-<div id="spellModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <div id="spellModalContent">Loading...</div>
-    </div>
+<div id="spellDetailPanel" class="spell-detail-panel">
+    
+    <!-- Spell details will be dynamically loaded here -->
 </div>
+
+

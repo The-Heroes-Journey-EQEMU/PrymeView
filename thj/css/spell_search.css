@@ -17,7 +17,7 @@
     position: relative;
     width: 100vw; /* Full viewport width */
     max-width: 100%; /* Prevent overflow */
-    max-height: 80vh; /* Set a max height to prevent excessive overflow */
+    max-height: 99vh; /* Set a max height to prevent excessive overflow */
     overflow-y: auto; /* Only enable vertical scroll if content overflows */
     border: 2px solid rgba(210, 180, 140, 0.8); /* Sand-colored border */
     border-radius: 8px;
@@ -25,7 +25,6 @@
     padding: 20px;
     background-color: rgba(46, 46, 46, 0.95); /* Darker background for the wrapper */
     box-sizing: border-box; /* Ensure padding doesn't cause overflow */
-    
 }
 
 /* Extra Border Around Form */
@@ -35,7 +34,6 @@
     border: 2px solid #c4a484; /* Sand color border */
     background-color: rgba(30, 30, 30, 0.9); /* Dark background to separate */
     box-shadow: 0 0 15px rgba(196, 164, 132, 0.6); /* Subtle glow */
-    
 }
 
 /* Spell Form Table */
@@ -90,25 +88,6 @@
     transition: filter 0.2s ease;
 }
 
-/* Level Dropdown Styling */
-.spell-custom-level-dropdown {
-    width: 50%;
-    padding: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ddd0b0; /* Sand color */
-    background: rgba(30, 30, 30, 0.85); /* Dark background */
-    border: 1px solid #c4a484; /* Sand border */
-    border-radius: 4px;
-    appearance: none;
-    cursor: pointer;
-    outline: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"%3E%3Cpath fill="white" d="M5.1 6l4 4 4-4z"/%3E');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px;
-}
-
 /* Spell Results Table */
 .spell-results {
     width: 100%;
@@ -116,7 +95,8 @@
     background-color: rgba(30, 30, 30, 0.85); /* Dark background for contrast */
 }
 
-.spell-results th, .spell-results td {
+.spell-results th,
+.spell-results td {
     border: 1px solid #7f715d; /* Darker sand border */
     padding: 10px;
 }
@@ -152,7 +132,7 @@
     background: rgba(30, 30, 30, 0.85); /* Dark background */
     border: 1px solid #c4a484; /* Sand border */
     border-radius: 4px;
-    width: 47.6%;
+    width: 39%;
     outline: none;
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -200,40 +180,170 @@
     padding: 2px 5px;
     font-weight: bold;
 }
-/* General styling for item icons with hover-image */
-.modal {
-    position: fixed;
-    background-color: white;
-    border: 1px solid #ccc;
+
+/* Dropdown styling (shared styles for both dropdowns) */
+.spell-custom-level-dropdown,
+.spell-custom-level-filter {
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ddd0b0; /* Sand color */
+    background: rgba(30, 30, 30, 0.85); /* Dark background */
+    border: 1px solid #c4a484; /* Sand border */
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"%3E%3Cpath fill="white" d="M5.1 6l4 4 4-4z"/%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+/* Level container for alignment */
+.level-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between the dropdowns */
+    justify-content: start;
+}
+
+/* Unique styling for the level dropdown */
+.spell-custom-level-dropdown {
+    width: 20%; /* Adjust width for the level dropdown */
+}
+
+/* Unique styling for the filter dropdown */
+.spell-custom-level-filter {
+    width: 20%; /* Adjust width for the filter dropdown */
+}
+
+/* Make rows visually interactive */
+.spell-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.spell-row:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the detail row */
+.spell-detail-row {
+    display: none; /* Hidden by default */
+    background: rgba(46, 46, 46, 0.95); /* Matches site's dark sand background */
+    transition: height 0.3s ease; /* Smooth slide-out effect */
+    border-top: 2px solid #bfa34b; /* Sand border for separation */
+}
+
+.spell-detail-row.open {
+    display: table-row; /* Make it visible */
+}
+
+/* Styles for the panel content inside the detail row */
+.spell-detail-panel-content {
     padding: 20px;
-    width: 300px;
-    z-index: 1000;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    display: none;
-}
-
-.modal .spell-item-details-content {
-    text-align: center;
-}
-
-.modal h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.modal img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-}
-
-.modal p {
+    background-color: rgba(46, 46, 46, 0.95); /* Match site background */
+    color: #ddd0b0; /* Sand color for text */
+    border: 2px solid #bfa34b; /* Sand-colored border */
+    border-radius: 8px; /* Rounded edges */
+    box-shadow: 0 0 15px rgba(191, 163, 75, 0.5); /* Soft sand glow */
+    font-family: Arial, sans-serif;
     font-size: 14px;
+    line-height: 1.5;
 }
 
-.modal a {
-    display: inline-block;
-    margin-top: 10px;
-    color: blue;
-    text-decoration: underline;
+/* Styling for the detail header (e.g., spell name) */
+.spell-detail-header h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #e6be2d; /* Bright sand color */
+    margin-bottom: 15px;
 }
+
+/* Styling for labels and text in the detail panel */
+.spell-detail-body p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #ddd0b0; /* Sand color for text */
+}
+
+/* Highlighting strong labels in the detail body */
+.spell-detail-body p strong {
+    color: #e6be2d; /* Bright sand for labels */
+}
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #bfa34b; /* Sand-colored border */
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background: #2e2e2e;
+    color: #bfa34b;
+    border: none;
+    border-right: 1px solid #bfa34b;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s ease;
+}
+
+.tab-button:last-child {
+    border-right: none;
+}
+
+.tab-button:hover {
+    background: #504a3a;
+}
+
+.tab-button.active {
+    background: #bfa34b;
+    color: #2e2e2e;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    background: rgba(46, 46, 46, 0.9);
+    border-radius: 10px;
+    border: 1px solid #bfa34b;
+}
+
+.tab-content.active {
+    display: block;
+}
+/* Zone Group Styling */
+.zone-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e6be2d; /* Bright sand color */
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.zone-vendors {
+    list-style: none;
+    margin: 0;
+    padding: 0 10px;
+}
+
+.zone-vendors li {
+    padding: 5px 0;
+    margin: 2px 0;
+    border-bottom: 1px solid rgba(191, 163, 75, 0.3); /* Subtle line between vendors */
+    font-size: 1rem;
+    color: #ddd0b0; /* Soft sand color */
+    transition: color 0.2s ease;
+}
+
+.zone-vendors li:hover {
+    color: #ffffff; /* Brighten vendor name on hover */
+    cursor: pointer;
+}
+.vendor-location {
+    font-size: 0.85em; /* Smaller font size */
+    color: #ebeb6f;
+}
+

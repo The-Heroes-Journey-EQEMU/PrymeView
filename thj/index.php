@@ -18,19 +18,19 @@
 </head>
 <body>
 <div class="sidebar">
-    <img src="/thj/images/thjlogo.png" alt="App Logo">
+    <img src="/thj/images/thjlogoname.png" alt="App Logo">
     <a href="#" onclick="loadContentForItemSearch('item_search.php')">Item Search</a>
     <!-- <a href="#" onclick="loadContent('character_search.php')">Character Search</a> -->
-    <!-- <a href="#" onclick="loadContentForSpellSearch('spell_search.php'); return false;">Spell Search</a> -->
+    <a href="#" onclick="loadContentForSpellSearch('spell_search.php'); return false;">Spell Search</a>
 
 
 
     <!-- <a href="#" onclick="loadContent('aa_search.php')">AA Search</a> -->
 </div>
 
-<div class="main-content">
+<div class="main-content" >
     <!-- Main content display area -->
-    <div class="content-display" id="content-display">
+    <div class="content-display" id="content-display" style="display: none;">
     
         <h1>Welcome to THJ Look Up Page</h1>
         <p>Select an option from the sidebar to get started.</p>
@@ -64,9 +64,10 @@
 <script src="/thj/scripts/scripts.js"></script>
 <script src="/thj/scripts/itemDetails.js"></script>
 <script src="/thj/scripts/hoverTool.js"></script>
-
-<script src="/thj/scripts/randombackground.js"></script>
+<!-- <script src="/thj/scripts/randombackground.js"></script> -->
 <script src="/thj/scripts/focusEffects.js"></script>
 <script src="/thj/scripts/spellSearch.js"></script>
+
+
 </body>
 </html>

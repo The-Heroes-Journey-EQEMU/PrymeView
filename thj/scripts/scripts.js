@@ -16,6 +16,7 @@ function loadContentForItemSearch(page) {
     const contentDisplay = document.getElementById('content-display');
     document.getElementById('content-display').style.display = 'block';
     document.getElementById('spell-search-container').style.display = 'none';
+    document.getElementById('spells-wrapper').style.display = 'none';
     
     const detailsContainer = document.getElementById('details-container');
     const upgradeTabContainer = document.querySelector('.upgrade-path-tab-container'); // Access the upgrade tab
@@ -57,33 +58,8 @@ function loadContentForItemSearch(page) {
         });
 }
 
-// Slot selection function with toggle capability, ensuring only one slot and its pair are selected
-function toggleSlotSelection(slotNum) {
-    const slotElement = document.getElementById(`slot_${slotNum}`);
-    const pairedSlot = slotPairs[slotNum];
-    const isSelected = slotElement.classList.contains('selected');
 
-    console.log(`Slot ${slotNum} clicked. Currently selected: ${isSelected}`);
 
-    // Deselect all slots first
-    document.querySelectorAll('.slot-image').forEach(img => img.classList.remove('selected'));
-    
-    // Remove paired slot if any
-    sessionStorage.removeItem('selectedSlot');
-    sessionStorage.removeItem('selectedSlotPaired');
-
-    if (!isSelected) {
-        // Select the clicked slot and its pair
-        slotElement.classList.add('selected');
-        if (pairedSlot) document.getElementById(`slot_${pairedSlot}`).classList.add('selected');
-
-        console.log(`Slot ${slotNum} and paired slot ${pairedSlot} selected.`);
-        sessionStorage.setItem('selectedSlot', slotNum);
-        if (pairedSlot) sessionStorage.setItem('selectedSlotPaired', pairedSlot);
-    } else {
-        console.log(`Slot ${slotNum} deselected.`);
-    }
-}
 
 
 
@@ -99,7 +75,13 @@ function setupListeners() {
     setupItemHoverListener();
     setupFocusEffectListener();
     setupStatFilterListeners();
-    
+    // Add listener for search term input
+    const searchBox = document.getElementById('search');
+    if (searchBox) {
+        searchBox.addEventListener('input', function () {
+            sessionStorage.setItem('searchTerm', this.value);
+        });
+    }
 
    
      
@@ -125,23 +107,25 @@ function toggleSlotSelection(slotNum) {
 
     console.log(`Slot ${slotNum} clicked. Currently selected: ${isSelected}`);
 
-    // Deselect all slots first
-    document.querySelectorAll('.slot-image').forEach(img => img.classList.remove('selected'));
-    sessionStorage.removeItem('selectedSlot');
-    sessionStorage.removeItem('selectedSlotPaired');
+    if (isSelected) {
+        // Deselect the slot and its pair
+        slotElement.classList.remove('selected');
+        if (pairedSlot) document.getElementById(`slot_${pairedSlot}`).classList.remove('selected');
 
-    if (!isSelected) {
-        // Select the clicked slot and its pair
+        // Clear from sessionStorage
+        sessionStorage.removeItem('selectedSlot');
+    } else {
+        // Select the slot and its pair
         slotElement.classList.add('selected');
         if (pairedSlot) document.getElementById(`slot_${pairedSlot}`).classList.add('selected');
 
-        console.log(`Slot ${slotNum} and paired slot ${pairedSlot} selected.`);
-        sessionStorage.setItem('selectedSlot', slotNum);
-        if (pairedSlot) sessionStorage.setItem('selectedSlotPaired', pairedSlot);
-    } else {
-        console.log(`Slot ${slotNum} deselected.`);
+        // Save the slot and its pair in sessionStorage
+        const selectedSlots = pairedSlot ? `${slotNum},${pairedSlot}` : `${slotNum}`;
+        sessionStorage.setItem('selectedSlot', selectedSlots);
+        console.log("Selected slot saved to sessionStorage:", selectedSlots);
     }
 }
+
 
 
 // Updated slot listener setup to avoid duplicate listeners
@@ -187,25 +171,34 @@ function selectRace(raceName) {
     }
 }
 
-// Helper function to select a class
+let selectedClasses = JSON.parse(sessionStorage.getItem('selectedClasses')) || []; // Load from sessionStorage or initialize empty
+
 function selectClass(className) {
     const classElement = document.querySelector(`[data-class-name="${className}"]`);
-    const isSelected = classElement.classList.contains('selected');
+    const isSelected = selectedClasses.includes(className);
 
-    // If class is already selected, deselect it
     if (isSelected) {
+        // If already selected, deselect it
+        selectedClasses = selectedClasses.filter(name => name !== className);
         classElement.classList.remove('selected');
-        sessionStorage.removeItem('selectedClass');
-        selectedClass = null;
         console.log(`Class ${className} deselected.`);
     } else {
-        // Otherwise, select the class
-        classElement.classList.add('selected');
-        sessionStorage.setItem('selectedClass', className);
-        selectedClass = className;
-        console.log(`Class ${className} selected.`);
+        if (selectedClasses.length < 3) {
+            // If less than 3 classes are selected, add the new one
+            selectedClasses.push(className);
+            classElement.classList.add('selected');
+            console.log(`Class ${className} selected.`);
+        } else {
+            alert('You can select up to 3 classes only.');
+            return;
+        }
     }
+
+    // Save the updated array to sessionStorage
+    sessionStorage.setItem('selectedClasses', JSON.stringify(selectedClasses));
+    console.log('Selected classes:', selectedClasses);
 }
+
 
 
 
@@ -225,12 +218,10 @@ function selectExpansion(expansionId, event) {
     sessionStorage.setItem('selectedExpansion', expansionId);
 }
 
-// Function to restore previously selected options and row selection on page load
 function restoreSelections() {
     const storedSlot = sessionStorage.getItem('selectedSlot');
-    const storedSlotPaired = sessionStorage.getItem('selectedSlotPaired');
     const storedRace = sessionStorage.getItem('selectedRace');
-    const storedClass = sessionStorage.getItem('selectedClass');
+    const storedClasses = JSON.parse(sessionStorage.getItem('selectedClasses')) || []; // Retrieve the array of selected classes
     const storedItemType = sessionStorage.getItem('selectedItemType');
     const storedExpansion = sessionStorage.getItem('selectedExpansion');
     const storedEnableFocus = sessionStorage.getItem('enableFocus');
@@ -238,33 +229,72 @@ function restoreSelections() {
     const storedFocusRankNormal = sessionStorage.getItem('focusRankNormal');
     const storedFocusRankEnhancedMinion = sessionStorage.getItem('focusRankEnhancedMinion');
     const storedEnableItemType = sessionStorage.getItem('enableItemType');
+
+    // Stat filters
     const storedStat = sessionStorage.getItem('selectedStat');
     const storedOperator = sessionStorage.getItem('selectedOperator');
     const storedStatValue = sessionStorage.getItem('statValue');
-   
+
+    // Resist filters
+    const storedResist = sessionStorage.getItem('selectedResist');
+    const storedResistOperator = sessionStorage.getItem('resistOperator');
+    const storedResistValue = sessionStorage.getItem('resistValue');
+
+    // Heroic stat filters
+    const storedHeroicStat = sessionStorage.getItem('selectedHeroicStat');
+    const storedHeroicOperator = sessionStorage.getItem('heroicOperator');
+    const storedHeroicValue = sessionStorage.getItem('heroicValue');
+
+    // Modification filters
+    const storedMod = sessionStorage.getItem('selectedMod');
+    const storedModOperator = sessionStorage.getItem('modOperator');
+    const storedModValue = sessionStorage.getItem('modValue');
+
+    const enableStatFilterCheckbox = document.getElementById('statFilter');
+    const storedEnableStatFilter = sessionStorage.getItem('enableStatFilter');
+
+    // Search save
+    const storedSearchTerm = sessionStorage.getItem('searchTerm');
+
+    if (storedSearchTerm) {
+        const searchBox = document.getElementById('search');
+        if (searchBox) searchBox.value = storedSearchTerm;
+    }
+    if (enableStatFilterCheckbox && storedEnableStatFilter) {
+        enableStatFilterCheckbox.checked = storedEnableStatFilter === 'true';
+        toggleStatVisibility(); // Ensure the stat filter section visibility is toggled
+    }
 
     // Restore slot selections
-    if (storedSlot) toggleSlotSelection(storedSlot);
-    if (storedSlotPaired) toggleSlotSelection(storedSlotPaired);
+    if (storedSlot) {
+        const slotNumbers = storedSlot.split(','); // Split the stored string into individual slot numbers
+        console.log("Restoring slots:", slotNumbers);
+
+        slotNumbers.forEach(slotNum => {
+            const slotElement = document.getElementById(`slot_${slotNum}`);
+            if (slotElement) {
+                slotElement.classList.add('selected');
+            }
+        });
+    }
 
     // Restore race selection
     if (storedRace) {
         const raceElement = document.querySelector(`[data-race-name="${storedRace}"]`);
         if (raceElement) {
             raceElement.classList.add('selected');
-            selectedRace = storedRace;  // Ensure the variable is updated
+            selectedRace = storedRace;
         }
     }
 
-    // Restore class selection
-    if (storedClass) {
-        const classElement = document.querySelector(`[data-class-name="${storedClass}"]`);
+    // Restore class selections
+    storedClasses.forEach(className => {
+        const classElement = document.querySelector(`[data-class-name="${className}"]`);
         if (classElement) {
             classElement.classList.add('selected');
-            selectedClass = storedClass;  // Ensure the variable is updated
         }
-    }
-    
+    });
+
     // Restore expansion selection
     if (storedExpansion) selectExpansion(storedExpansion, { currentTarget: document.querySelector(`[data-expansion-id="${storedExpansion}"]`) });
 
@@ -278,14 +308,14 @@ function restoreSelections() {
     const enableFocusCheckbox = document.getElementById('enableFocus');
     if (enableFocusCheckbox && storedEnableFocus) {
         enableFocusCheckbox.checked = storedEnableFocus === 'true';
-        toggleFocusEffect(); // Display or hide focus effect selection based on checkbox state
+        toggleFocusEffect();
     }
 
     // Restore focus type and rank dropdowns
     const focusTypeDropdown = document.getElementById('focus_type');
     if (focusTypeDropdown && storedFocusType) {
         focusTypeDropdown.value = storedFocusType;
-        toggleRankList(); // Update rank list based on focus type
+        toggleRankList();
     }
 
     const focusRankNormalDropdown = document.getElementById('focus_rank_normal');
@@ -302,31 +332,32 @@ function restoreSelections() {
     const enableItemTypeCheckbox = document.getElementById('enableItemType');
     if (enableItemTypeCheckbox && storedEnableItemType) {
         enableItemTypeCheckbox.checked = storedEnableItemType === 'true';
-        toggleItemType(); // Display or hide item type selection based on checkbox state
+        toggleItemType();
     }
 
-    // Restore previously selected row, if applicable
-    if (selectedRowId) {
-        const previouslySelectedRow = document.querySelector(`.item-row[data-id="${selectedRowId}"]`);
-        if (previouslySelectedRow) previouslySelectedRow.classList.add('selected-row');
-    }
-    // Restore the stored values to the dropdowns and input fields
-    if (storedStat) {
-        const statDropdown = document.getElementById('statDropdown');
-        if (statDropdown) statDropdown.value = storedStat;
-    }
+    // Restore stat filters
+    if (storedStat) document.getElementById('istat1').value = storedStat;
+    if (storedOperator) document.getElementById('istatComparison').value = storedOperator;
+    if (storedStatValue) document.getElementById('istatValue').value = storedStatValue;
 
-    if (storedOperator) {
-        const operatorDropdown = document.getElementById('operatorDropdown');
-        if (operatorDropdown) operatorDropdown.value = storedOperator;
-    }
+    // Restore resist filters
+    if (storedResist) document.getElementById('iresists').value = storedResist;
+    if (storedResistOperator) document.getElementById('iresistsComparison').value = storedResistOperator;
+    if (storedResistValue) document.getElementById('iresistsValue').value = storedResistValue;
 
-    if (storedStatValue) {
-        const statNumber = document.getElementById('statNumber');
-        if (statNumber) statNumber.value = storedStatValue;
-    }
-    
+    // Restore heroic stat filters
+    if (storedHeroicStat) document.getElementById('iheroics').value = storedHeroicStat;
+    if (storedHeroicOperator) document.getElementById('iheroicsComparison').value = storedHeroicOperator;
+    if (storedHeroicValue) document.getElementById('iheroicsValue').value = storedHeroicValue;
+
+    // Restore modification filters
+    if (storedMod) document.getElementById('imod').value = storedMod;
+    if (storedModOperator) document.getElementById('imodComparison').value = storedModOperator;
+    if (storedModValue) document.getElementById('imodValue').value = storedModValue;
 }
+
+
+
 
 
 // Attach search listener for item search form submission
@@ -396,7 +427,7 @@ function handleItemSearch(event) {
             console.error('Failed to load results:', xhr.statusText);
         }
     };
-
+ 
     // Build request body for AJAX call
     const params = {
         search_term: searchQuery,
@@ -535,6 +566,9 @@ function toggleStatVisibility() {
     const statsContainer = document.getElementById('statFilters');
     const isChecked = document.getElementById('statFilter').checked;
 
+    // Store the checkbox state in sessionStorage
+    sessionStorage.setItem('enableStatFilter', isChecked);
+
     // Toggle visibility based on checkbox state
     if (isChecked) {
         statsContainer.style.display = 'flex'; // Show stats
@@ -542,6 +576,7 @@ function toggleStatVisibility() {
         statsContainer.style.display = 'none'; // Hide stats
     }
 }
+
 
 function handleStatFilterChange() {
     const statDropdown = document.getElementById('statDropdown');
@@ -560,17 +595,98 @@ function handleStatFilterChange() {
 }
 
 
-// Attach event listeners to the stat filter inputs
 function setupStatFilterListeners() {
-    const statDropdown = document.getElementById('statDropdown');
-    const operatorDropdown = document.getElementById('operatorDropdown');
-    const statNumber = document.getElementById('statNumber');
+    const statDropdown = document.getElementById('istat1');
+    const operatorDropdown = document.getElementById('istatComparison');
+    const statNumber = document.getElementById('istatValue');
+    const enableStatFilterCheckbox = document.getElementById('statFilter');
 
     // Attach event listeners to each input
     if (statDropdown) statDropdown.addEventListener('change', handleStatFilterChange);
     if (operatorDropdown) operatorDropdown.addEventListener('change', handleStatFilterChange);
     if (statNumber) statNumber.addEventListener('input', handleStatFilterChange);
+
+    // Store enableStatFilter checkbox state
+    if (enableStatFilterCheckbox) {
+        enableStatFilterCheckbox.addEventListener('change', () => {
+            sessionStorage.setItem('enableStatFilter', enableStatFilterCheckbox.checked);
+        });
+    }
 }
 
 
+
+function saveStatFilters() {
+    const statDropdown = document.getElementById('istat1');
+    const operatorDropdown = document.getElementById('istatComparison');
+    const statValue = document.getElementById('istatValue');
+
+    const resistDropdown = document.getElementById('iresists');
+    const resistOperator = document.getElementById('iresistsComparison');
+    const resistValue = document.getElementById('iresistsValue');
+
+    const heroicDropdown = document.getElementById('iheroics');
+    const heroicOperator = document.getElementById('iheroicsComparison');
+    const heroicValue = document.getElementById('iheroicsValue');
+
+    const modDropdown = document.getElementById('imod');
+    const modOperator = document.getElementById('imodComparison');
+    const modValue = document.getElementById('imodValue');
+
+    // Save stat filter
+    sessionStorage.setItem('selectedStat', statDropdown.value);
+    sessionStorage.setItem('selectedOperator', operatorDropdown.value);
+    sessionStorage.setItem('statValue', statValue.value);
+
+    // Save resist filter
+    sessionStorage.setItem('selectedResist', resistDropdown.value);
+    sessionStorage.setItem('resistOperator', resistOperator.value);
+    sessionStorage.setItem('resistValue', resistValue.value);
+
+    // Save heroic stat filter
+    sessionStorage.setItem('selectedHeroicStat', heroicDropdown.value);
+    sessionStorage.setItem('heroicOperator', heroicOperator.value);
+    sessionStorage.setItem('heroicValue', heroicValue.value);
+
+    // Save modification filter
+    sessionStorage.setItem('selectedMod', modDropdown.value);
+    sessionStorage.setItem('modOperator', modOperator.value);
+    sessionStorage.setItem('modValue', modValue.value);
+}
+
+// Attach change listeners to filter inputs
+function setupStatFilterListeners() {
+    const statDropdown = document.getElementById('istat1');
+    const operatorDropdown = document.getElementById('istatComparison');
+    const statValue = document.getElementById('istatValue');
+
+    const resistDropdown = document.getElementById('iresists');
+    const resistOperator = document.getElementById('iresistsComparison');
+    const resistValue = document.getElementById('iresistsValue');
+
+    const heroicDropdown = document.getElementById('iheroics');
+    const heroicOperator = document.getElementById('iheroicsComparison');
+    const heroicValue = document.getElementById('iheroicsValue');
+
+    const modDropdown = document.getElementById('imod');
+    const modOperator = document.getElementById('imodComparison');
+    const modValue = document.getElementById('imodValue');
+
+    // Attach listeners
+    if (statDropdown) statDropdown.addEventListener('change', saveStatFilters);
+    if (operatorDropdown) operatorDropdown.addEventListener('change', saveStatFilters);
+    if (statValue) statValue.addEventListener('input', saveStatFilters);
+
+    if (resistDropdown) resistDropdown.addEventListener('change', saveStatFilters);
+    if (resistOperator) resistOperator.addEventListener('change', saveStatFilters);
+    if (resistValue) resistValue.addEventListener('input', saveStatFilters);
+
+    if (heroicDropdown) heroicDropdown.addEventListener('change', saveStatFilters);
+    if (heroicOperator) heroicOperator.addEventListener('change', saveStatFilters);
+    if (heroicValue) heroicValue.addEventListener('input', saveStatFilters);
+
+    if (modDropdown) modDropdown.addEventListener('change', saveStatFilters);
+    if (modOperator) modOperator.addEventListener('change', saveStatFilters);
+    if (modValue) modValue.addEventListener('input', saveStatFilters);
+}
 

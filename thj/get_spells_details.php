@@ -1,7 +1,9 @@
 <?php
 // Connect to database
-//removed db info for git
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
+$host = '149.28.117.25:16033';
+$dbname = 'content';
+$username = 'ro';
+$password = 'ro';
 $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
 
 // Get the spell ID from the request
