@@ -198,7 +198,7 @@ window.showSpellDetails = function (spellId) {
     // Insert the detail panel row after the clicked row
     clickedRow.parentNode.insertBefore(detailPanel, clickedRow.nextSibling);
 
-    fetch(`/thj/spell_detail.php?id=${spellId}`)
+    fetch(`/spell_detail.php?id=${spellId}`)
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -237,7 +237,7 @@ function loadVendors() {
 
     const vendorResults = document.getElementById('vendorResults');
 
-    fetch(`/thj/get_spell_vendors.php?id=${spellId}`)
+    fetch(`/get_spell_vendors.php?id=${spellId}`)
         .then(response => response.json())
         .then(data => {
             console.log("Vendor data:", data);
@@ -302,7 +302,7 @@ function loadItemsWithEffect() {
 
     const itemResults = document.getElementById('itemResults');
 
-    fetch(`/thj/get_items_with_effect.php?id=${spellId}`)
+    fetch(`/get_items_with_effect.php?id=${spellId}`)
         .then(response => response.json())
         .then(data => {
             console.log("Item data:", data);
