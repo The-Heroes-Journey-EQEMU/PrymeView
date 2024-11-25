@@ -5,8 +5,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include bitmask logic
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/bitmask_definitions.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/bitmask_definitions.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 
 $itemId = $_GET['id'] ?? null;
 $includeNpcInfo = isset($_GET['npc_info']) && $_GET['npc_info'] === 'true';

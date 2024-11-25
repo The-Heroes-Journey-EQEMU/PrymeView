@@ -1,10 +1,10 @@
 <?php
 
 $page_title = "Spell Search";
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/classes.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/spell_effects.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/spellTypes.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spell_effects.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spellTypes.php';
 
 // Enable PHP error reporting for debugging
 ini_set('display_errors', 1);

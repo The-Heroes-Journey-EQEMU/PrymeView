@@ -5,11 +5,11 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 
 // Include necessary files
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/bitmask_definitions.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/races.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/classes.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/focus_search_inc.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/bitmask_definitions.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/races.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/focus_search_inc.php';
 
 $itemId = $_GET['item_id'] ?? null; // Use 'item_id' to differentiate from form submissions
 
@@ -28,7 +28,7 @@ if ($itemId) {
             $item['classes'] = decodeClasses($item['classes']);
 
             // Add icon path for the front-end
-            $item['icon_path'] = "/thj/sprites/item_icons.png#" . htmlspecialchars($item['icon']);
+            $item['icon_path'] = "/sprites/item_icons.png#" . htmlspecialchars($item['icon']);
 
             // Send item data as JSON
             header('Content-Type: application/json');
@@ -245,9 +245,9 @@ WHERE 1=1";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item Search</title>
-    <link rel="stylesheet" href="/thj/css/styles.css">
-    <link rel="stylesheet" href="/thj/sprites/item_icons.css">
-    <link rel="stylesheet" href="/thj/css/itemSearch.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/sprites/item_icons.css">
+    <link rel="stylesheet" href="/css/itemSearch.css">
 </head>
 <body>
 <div class="content-display">
@@ -280,7 +280,7 @@ WHERE 1=1";
                 <?php foreach ($slotBitmask as $slotNum => $slotInfo): ?>
                     <div class="slot-container">
                         <div class="slot-title"><?php echo htmlspecialchars($slotInfo['name']); ?></div>
-                        <img src="/thj/images/slots/slot_<?php echo $slotNum; ?>.gif"
+                        <img src="/images/slots/slot_<?php echo $slotNum; ?>.gif"
                             alt="<?php echo $slotInfo['name']; ?>"
                             class="slot-image"
                             data-slot-num="<?php echo $slotNum; ?>"
@@ -307,7 +307,7 @@ WHERE 1=1";
                     <div class="expansion-icon-container expansion-<?php echo $expansion['id']; ?>" 
              data-expansion-id="<?php echo $expansion['id']; ?>" 
              onclick="selectExpansion('<?php echo $expansion['id']; ?>', event)">
-            <img src="/thj/images/expansion_icons/<?php echo $expansion['icon']; ?>" 
+            <img src="/images/expansion_icons/<?php echo $expansion['icon']; ?>" 
                  alt="Expansion <?php echo $expansion['id']; ?>" 
                  class="expansion-icon" 
                  title="<?php echo $expansion['name']; ?>">
@@ -587,7 +587,7 @@ WHERE 1=1";
     </div>
 </div>
 
-<script src="/thj/scripts/scripts.js"></script>
+<script src="/scripts/scripts.js"></script>
 
 </body>
 </html>

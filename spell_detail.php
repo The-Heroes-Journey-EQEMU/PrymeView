@@ -1,6 +1,6 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/classes.php'; // Include class mappings
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php'; // Include class mappings
 
 // Get spell ID from the request
 $spellId = $_GET['id'] ?? null;

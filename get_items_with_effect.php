@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json'); // Ensure JSON response
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 
 $spellId = $_GET['id'] ?? null;
 
