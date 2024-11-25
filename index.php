@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/expansion_enable.css">
     <link rel="stylesheet" href="/sprites/spell_icons/spell_icons_20.css">
     <link rel="stylesheet" href="/sprites/spell_icons/spell_icons_30.css">
-    <link rel="stylesheet" href="/tsprites/spell_icons/spell_icons_40.css">
+    <link rel="stylesheet" href="/sprites/spell_icons/spell_icons_40.css">
     <link rel="stylesheet" href="/css/spell_search.css">
     
     
