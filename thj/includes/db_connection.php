@@ -1,10 +1,11 @@
 <?php
-// Database connection settings
-$host = 'ip:port';
-$dbname = 'dbname';
-$username = 'username';
-$password = 'password';
+// Load environment variables
+$host = getenv('DB_HOST') ?: 'localhost'; // Default to localhost if not set
+$dbname = getenv('DB_NAME') ?: 'content';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
 
+// Database connection
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
