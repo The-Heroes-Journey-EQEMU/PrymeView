@@ -137,7 +137,7 @@ function positionTooltip(tooltip) {
 function generateTooltipContent(data) {
     const iconClass = `item-${data.icon || "default"}`;
     const itemName = data.Name;
-    const augmentSlotImageUrl = "/thj/images/icons/blank_slot.gif";
+    const augmentSlotImageUrl = "/images/icons/blank_slot.gif";
     const elementalDamage = data.elemdmgamt && data.elemdmgtype
         ? `<div class="stat-line"><b>${getElementalDamageType(data.elemdmgtype)} Damage:</b> ${data.elemdmgamt}</div>`
         : '';
