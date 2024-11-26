@@ -219,6 +219,10 @@ function generateTooltipContent(data) {
         formatWithHeroic("Poison Resist", data.pr, data.heroic_pr)
     ].filter(Boolean).join('');
 
+    const procRate = [
+        data.procrate ? `<div class="proc-line"><b>Procrate:</b> ${data.procrate}</div>` : '',
+    ]
+    
     const specialStats = [
         data.accuracy ? `<div class="stat-line"><b>Accuracy:</b> ${data.accuracy}</div>` : '',
         data.attack ? `<div class="stat-line"><b>Attack:</b> ${data.attack}</div>` : '',
@@ -298,6 +302,9 @@ function generateTooltipContent(data) {
                 
                 ${spellDetails} 
             </div>
+            <div class="tooltip-stats proc-rate">
+           ${procRate}
+           </div>
         </div>
     `;
 }
