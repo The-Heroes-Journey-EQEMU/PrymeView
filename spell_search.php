@@ -13,12 +13,11 @@ error_reporting(E_ALL);
 
 // Server-specific variables
 $server_max_level = 70;
-$max_items_returned = 100;
 
 // Capture query parameters
 $namestring = $_GET['name'] ?? '';
-$level = $_GET['level'] ?? 0;
-$level_filter = $_GET['level_filter'] ?? 'only'; // Default to "only"
+$level = $_GET['level'] ?? '';
+$level_filter = $_GET['level_filter'] ?? 'only';
 $types = isset($_GET['types']) ? explode(',', $_GET['types']) : [];
 
 // Get class columns for the selected classes
@@ -26,13 +25,9 @@ $class_columns = array_intersect_key($classColumnMapping, array_flip($types));
 $selected_columns = array_values($class_columns);
 
 // Handle `min_level` calculation dynamically
-if (!empty($selected_columns)) {
-    $min_level_expr = count($selected_columns) === 1
-        ? $selected_columns[0]
-        : "LEAST(" . implode(", ", $selected_columns) . ")";
-} else {
-    $min_level_expr = "255"; // Default when no classes are selected
-}
+$min_level_expr = !empty($selected_columns)
+    ? (count($selected_columns) === 1 ? $selected_columns[0] : "LEAST(" . implode(", ", $selected_columns) . ")")
+    : "255"; // Default when no classes are selected
 
 // Display the form
 ?>
@@ -88,21 +83,29 @@ if (!empty($selected_columns)) {
 </div>
 
 <?php
-// Execute the spell search if filters are provided
-if ($namestring !== '' || $level != 0 || !empty($types)) {
+// Only execute the search if at least one filter is provided
+if (!empty($namestring) || !empty($level) || !empty($types)) {
     $sql = "SELECT *, {$min_level_expr} AS min_level FROM spells_new WHERE 1=1";
+    $params = [];
 
-    // Add class-based conditions
+    // Add name filter if a name is specified
+    if (!empty($namestring)) {
+        $sql .= " AND name LIKE :name";
+        $params[':name'] = '%' . $namestring . '%';
+    }
+
+    // Add class-based conditions if classes are selected
     if (!empty($selected_columns)) {
         $class_conditions = [];
         foreach ($selected_columns as $col) {
             $class_conditions[] = "$col <= :max_level AND $col != 255";
         }
         $sql .= " AND (" . implode(' OR ', $class_conditions) . ")";
+        $params[':max_level'] = $server_max_level;
     }
 
-    // Add level filter
-    if ($level != 0) {
+    // Add level filter if a level is specified
+    if (!empty($level)) {
         if ($level_filter === 'only') {
             $sql .= " AND {$min_level_expr} = :level";
         } elseif ($level_filter === 'and_higher') {
@@ -110,11 +113,7 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
         } elseif ($level_filter === 'and_lower') {
             $sql .= " AND {$min_level_expr} <= :level";
         }
-    }
-
-    // Add name filter
-    if ($namestring) {
-        $sql .= " AND name LIKE :name";
+        $params[':level'] = $level;
     }
 
     // Exclude specific spells by exact name
@@ -129,24 +128,16 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
     ];
     $placeholders = implode(',', array_map(fn($i) => ":excluded_$i", array_keys($excluded_spells)));
     $sql .= " AND name NOT IN ($placeholders)";
-
-    $sql .= " GROUP BY name ORDER BY min_level, name LIMIT :max_items";
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':max_level', $server_max_level, PDO::PARAM_INT);
-    if ($level != 0) {
-        $stmt->bindValue(':level', $level, PDO::PARAM_INT);
-    }
-    if ($namestring) {
-        $stmt->bindValue(':name', '%' . $namestring . '%', PDO::PARAM_STR);
-    }
-    $stmt->bindValue(':max_items', $max_items_returned, PDO::PARAM_INT);
-
     foreach ($excluded_spells as $index => $spell_name) {
-        $stmt->bindValue(":excluded_$index", $spell_name, PDO::PARAM_STR);
+        $params[":excluded_$index"] = $spell_name;
     }
 
-    $stmt->execute();
+    // Add grouping and ordering
+    $sql .= " GROUP BY name ORDER BY min_level, name";
+
+    // Prepare and execute the query
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $spells = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Render results
@@ -197,14 +188,12 @@ if ($namestring !== '' || $level != 0 || !empty($types)) {
         echo '</table>';
         echo '</div>';
     } else {
-        echo '<p>No results found.</p>';
+        echo '<p>No results found. Please refine your search.</p>';
     }
+} else {
+    echo '<p>Use the search form above to find spells.</p>';
 }
 ?>
-
 <div id="spellDetailPanel" class="spell-detail-panel">
-    
     <!-- Spell details will be dynamically loaded here -->
 </div>
-
-

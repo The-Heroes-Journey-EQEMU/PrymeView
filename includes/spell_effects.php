@@ -1,7 +1,7 @@
 <?php
 // spell_effects.php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/thj/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 
 // Calculate spell effect value
 function CalcSpellEffectValue($formula, $base_value, $max, $level) {

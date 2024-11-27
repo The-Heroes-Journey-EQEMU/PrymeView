@@ -155,11 +155,16 @@ function generateTooltipContent(data) {
         Focus: data.focuseffect,
         Worn: data.worneffect,
         Bard: data.bardeffect
+        
     };
     const castTime ={
 
         Casttime: data.casttime
     }
+
+    const procRate = [
+        data.procrate ? `<div class="proc-line"><b>Procrate:</b> ${data.procrate}</div>` : '',
+    ]
     // Helper function to format stats with heroic values
     function formatWithHeroic(label, value, heroic) {
         return value && value !== 0 && value !== -1 && value !== 'N/A' && value !== 'Unknown'
@@ -219,10 +224,6 @@ function generateTooltipContent(data) {
         formatWithHeroic("Poison Resist", data.pr, data.heroic_pr)
     ].filter(Boolean).join('');
 
-    const procRate = [
-        data.procrate ? `<div class="proc-line"><b>Procrate:</b> ${data.procrate}</div>` : '',
-    ]
-    
     const specialStats = [
         data.accuracy ? `<div class="stat-line"><b>Accuracy:</b> ${data.accuracy}</div>` : '',
         data.attack ? `<div class="stat-line"><b>Attack:</b> ${data.attack}</div>` : '',
@@ -300,11 +301,14 @@ function generateTooltipContent(data) {
             <!-- Spell Details Section -->
             <div class="tooltip-section spell-details">
                 
-                ${spellDetails} 
+                ${spellDetails}
+                
             </div>
-            <div class="tooltip-stats proc-rate">
+           <div class="tooltip-stats proc-rate">
            ${procRate}
            </div>
+            
+            
         </div>
     `;
 }

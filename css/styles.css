@@ -6,7 +6,7 @@ body, html {
 }
 
 body {
-    background-image: url("/thj/images/backgrounds/thjlogopic.png");
+    background-image: url("/images/backgrounds/thjlogopic.png");
     background-size: 100% 100%; /* Stretches the image */
     background-position: center;
     background-repeat: no-repeat;

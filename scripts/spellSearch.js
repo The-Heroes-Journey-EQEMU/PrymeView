@@ -46,54 +46,55 @@ function loadContentForSpellSearch(page) {
 }
 
 
-// Attach search listener for spell search form submission
 function attachSpellSearchListener(spellSearchForm) {
+    // Remove existing listener to avoid duplicates
     spellSearchForm.removeEventListener('submit', handleSpellSearch);
     spellSearchForm.addEventListener('submit', handleSpellSearch);
 
     function handleSpellSearch(event) {
-        event.preventDefault();
+        event.preventDefault(); // Prevent form submission
         const searchQueryElement = document.querySelector('input[name="name"]');
         const selectedClassesElement = document.getElementById('selectedSpellClasses');
         const selectedLevelElement = document.querySelector('select[name="level"]');
-        const levelFilterElement = document.querySelector('select[name="level_filter"]'); // New dropdown for level filter
-    
-        if (!searchQueryElement || !selectedClassesElement || !selectedLevelElement || !levelFilterElement) {
-            console.error("Required form elements for spell search are missing.");
-            return;
-        }
-    
-        const searchQuery = searchQueryElement.value.trim();
-        const selectedClasses = selectedClassesElement.value;
-        const selectedLevel = selectedLevelElement.value;
-        const levelFilter = levelFilterElement.value;
-    
+        const levelFilterElement = document.querySelector('select[name="level_filter"]');
+
+        const searchQuery = searchQueryElement ? searchQueryElement.value.trim() : '';
+        const selectedClasses = selectedClassesElement ? selectedClassesElement.value : '';
+        const selectedLevel = selectedLevelElement ? selectedLevelElement.value : '';
+        const levelFilter = levelFilterElement ? levelFilterElement.value : '';
+
+        // Show a warning if all fields are empty
         if (!searchQuery && selectedClasses === '' && selectedLevel === '') {
             alert('Please enter a search term, select a class, or choose a level.');
             return;
         }
-    
+
+        // Construct the AJAX request
         const xhr = new XMLHttpRequest();
         xhr.open(
             'POST',
             `spell_search.php?name=${encodeURIComponent(searchQuery)}&types=${encodeURIComponent(selectedClasses)}&level=${encodeURIComponent(selectedLevel)}&level_filter=${encodeURIComponent(levelFilter)}`,
             true
         );
-    
+
         xhr.onload = function () {
             const spellSearchContainer = document.getElementById('spell-search-container');
-            spellSearchContainer.innerHTML = xhr.status === 200 ? xhr.responseText : 'Error loading spell search results.';
-            setupSpellSearchListeners();
-            const newSearchForm = document.querySelector('#spellSearchForm');
-            if (newSearchForm) attachSpellSearchListener(newSearchForm);
-    
-            restoreSpellClassSelection();
+            if (xhr.status === 200) {
+                // Display the response
+                spellSearchContainer.innerHTML = xhr.responseText;
+                setupSpellSearchListeners(); // Reattach listeners for new elements
+                const newSearchForm = document.querySelector('#spellSearchForm');
+                if (newSearchForm) attachSpellSearchListener(newSearchForm); // Reattach listener for the new form
+                restoreSpellClassSelection(); // Restore class selection if needed
+            } else {
+                spellSearchContainer.innerHTML = 'Error loading spell search results.';
+            }
         };
-    
-        xhr.send();
+
+        xhr.send(); // Send the request
     }
-    
 }
+
 
 // Set up listeners specific to spell search
 function setupSpellSearchListeners() {

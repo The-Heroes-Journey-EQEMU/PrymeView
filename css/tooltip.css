@@ -327,3 +327,6 @@
 .npc-info-toggle-container {
     margin-top: 5px;
 }
+.embed-mode .button-container {
+    display: none;
+}

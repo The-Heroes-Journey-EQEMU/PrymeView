@@ -18,7 +18,7 @@
 </head>
 <body>
 <div class="sidebar">
-    <img src="/thj/images/thjlogoname.png" alt="App Logo">
+    <img src="/images/thjlogoname.png" alt="App Logo">
     <a href="#" onclick="loadContentForItemSearch('item_search.php')">Item Search</a>
     <!-- <a href="#" onclick="loadContent('character_search.php')">Character Search</a> -->
     <a href="#" onclick="loadContentForSpellSearch('spell_search.php'); return false;">Spell Search</a>
@@ -64,7 +64,7 @@
 <script src="/scripts/scripts.js"></script>
 <script src="/scripts/itemDetails.js"></script>
 <script src="/scripts/hoverTool.js"></script>
-<!-- <script src="/thj/scripts/randombackground.js"></script> -->
+<!-- <script src="/scripts/randombackground.js"></script> -->
 <script src="/scripts/focusEffects.js"></script>
 <script src="/scripts/spellSearch.js"></script>
 
