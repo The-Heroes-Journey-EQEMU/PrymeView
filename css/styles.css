@@ -6,8 +6,8 @@ body, html {
 }
 
 body {
-    background-image: url("/images/backgrounds/thjlogopic.png");
-    background-size: 100% 100%; /* Stretches the image */
+    background-image: url("/images/backgrounds/THJpicnologo.png");
+    background-size:cover;
     background-position: center;
     background-repeat: no-repeat;
     color: #ffffff; /* Gold */
