@@ -21,7 +21,7 @@
     <img src="/images/thjlogoname.png" alt="App Logo">
     <a href="#" onclick="loadContentForItemSearch('item_search.php')">Item Search</a>
     <!-- <a href="#" onclick="loadContent('character_search.php')">Character Search</a> -->
-    <a href="#" onclick="loadContentForSpellSearch('spell_search.php'); return false;">Spell Search</a>
+    <!-- <a href="#" onclick="loadContentForSpellSearch('spell_search.php'); return false;">Spell Search</a> -->
 
 
 
