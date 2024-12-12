@@ -20,14 +20,14 @@ $level = $_GET['level'] ?? '';
 $level_filter = $_GET['level_filter'] ?? 'only';
 $types = isset($_GET['types']) ? explode(',', $_GET['types']) : [];
 
-// Get class columns for the selected classes
+// Map class columns for the selected classes
 $class_columns = array_intersect_key($classColumnMapping, array_flip($types));
 $selected_columns = array_values($class_columns);
 
-// Handle `min_level` calculation dynamically
+// Calculate `min_level_expr` dynamically for level and class filtering
 $min_level_expr = !empty($selected_columns)
     ? (count($selected_columns) === 1 ? $selected_columns[0] : "LEAST(" . implode(", ", $selected_columns) . ")")
-    : "255"; // Default when no classes are selected
+    : "LEAST(" . implode(", ", array_map(fn($col) => "NULLIF($col, 255)", array_values($classColumnMapping))) . ")";
 
 // Display the form
 ?>
@@ -85,23 +85,24 @@ $min_level_expr = !empty($selected_columns)
 <?php
 // Only execute the search if at least one filter is provided
 if (!empty($namestring) || !empty($level) || !empty($types)) {
+    // Start the base query
     $sql = "SELECT *, {$min_level_expr} AS min_level FROM spells_new WHERE 1=1";
     $params = [];
 
-    // Add name filter if a name is specified
+    // Add name filter (term search)
     if (!empty($namestring)) {
         $sql .= " AND name LIKE :name";
         $params[':name'] = '%' . $namestring . '%';
     }
 
-    // Add class-based conditions if classes are selected
+    // Add class-based filtering if classes are selected
     if (!empty($selected_columns)) {
         $class_conditions = [];
         foreach ($selected_columns as $col) {
-            $class_conditions[] = "$col <= :max_level AND $col != 255";
+            $class_conditions[] = "$col <= :server_max_level AND $col != 255";
         }
         $sql .= " AND (" . implode(' OR ', $class_conditions) . ")";
-        $params[':max_level'] = $server_max_level;
+        $params[':server_max_level'] = $server_max_level;
     }
 
     // Add level filter if a level is specified
@@ -116,7 +117,15 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
         $params[':level'] = $level;
     }
 
-    // Exclude specific spells by exact name
+    // Exclude spells with levels > 70 across all classes
+    $class_level_conditions = [];
+    foreach ($classColumnMapping as $col) {
+        $class_level_conditions[] = "$col <= :server_max_level AND $col != 255";
+    }
+    $sql .= " AND (" . implode(' OR ', $class_level_conditions) . ")";
+    $params[':server_max_level'] = $server_max_level;
+
+    // Exclude specific spells by name
     $excluded_spells = [
         'Echo of Aegolism',
         'Echo of Experience',
@@ -135,7 +144,7 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
     // Add grouping and ordering
     $sql .= " GROUP BY name ORDER BY min_level, name";
 
-    // Prepare and execute the query
+    // Execute the query
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $spells = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -159,11 +168,11 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
             $icon_and_name .= htmlspecialchars($spell['name']);
 
             $classIcons = '';
-            foreach ($class_columns as $classCol) {
-                if ($spell[$classCol] <= $server_max_level && $spell[$classCol] != 255) {
-                    $classId = array_search($classCol, $classColumnMapping);
+            foreach ($classColumnMapping as $col) {
+                if ($spell[$col] <= $server_max_level && $spell[$col] != 255) {
+                    $classId = array_search($col, $classColumnMapping);
                     if ($classId && isset($classes[$classId])) {
-                        $level_for_class = $spell[$classCol];
+                        $level_for_class = $spell[$col];
                         $classIcon = '<div class="spell-result-class-icon item-' . $classes[$classId]['image'] . '" title="' . $classes[$classId]['fullName'] . '">';
                         $classIcon .= '<span class="spell-class-level">' . $level_for_class . '</span>';
                         $classIcon .= '</div>';
@@ -194,6 +203,7 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
     echo '<p>Use the search form above to find spells.</p>';
 }
 ?>
+
 <div id="spellDetailPanel" class="spell-detail-panel">
     <!-- Spell details will be dynamically loaded here -->
 </div>

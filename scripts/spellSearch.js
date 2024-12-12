@@ -53,22 +53,27 @@ function attachSpellSearchListener(spellSearchForm) {
 
     function handleSpellSearch(event) {
         event.preventDefault(); // Prevent form submission
+    
+        // Get references to form elements
         const searchQueryElement = document.querySelector('input[name="name"]');
         const selectedClassesElement = document.getElementById('selectedSpellClasses');
         const selectedLevelElement = document.querySelector('select[name="level"]');
         const levelFilterElement = document.querySelector('select[name="level_filter"]');
-
+    
+        // Extract values from the form elements
         const searchQuery = searchQueryElement ? searchQueryElement.value.trim() : '';
-        const selectedClasses = selectedClassesElement ? selectedClassesElement.value : '';
+        const selectedClasses = selectedClassesElement && selectedClassesElement.value.trim() !== ''
+            ? selectedClassesElement.value
+            : ''; // Pass empty string if no classes are selected
         const selectedLevel = selectedLevelElement ? selectedLevelElement.value : '';
         const levelFilter = levelFilterElement ? levelFilterElement.value : '';
-
+    
         // Show a warning if all fields are empty
         if (!searchQuery && selectedClasses === '' && selectedLevel === '') {
             alert('Please enter a search term, select a class, or choose a level.');
             return;
         }
-
+    
         // Construct the AJAX request
         const xhr = new XMLHttpRequest();
         xhr.open(
@@ -76,7 +81,7 @@ function attachSpellSearchListener(spellSearchForm) {
             `spell_search.php?name=${encodeURIComponent(searchQuery)}&types=${encodeURIComponent(selectedClasses)}&level=${encodeURIComponent(selectedLevel)}&level_filter=${encodeURIComponent(levelFilter)}`,
             true
         );
-
+    
         xhr.onload = function () {
             const spellSearchContainer = document.getElementById('spell-search-container');
             if (xhr.status === 200) {
@@ -88,11 +93,14 @@ function attachSpellSearchListener(spellSearchForm) {
                 restoreSpellClassSelection(); // Restore class selection if needed
             } else {
                 spellSearchContainer.innerHTML = 'Error loading spell search results.';
+                console.error('Error:', xhr.responseText);
             }
         };
-
+    
         xhr.send(); // Send the request
     }
+    
+    
 }
 
 
@@ -109,12 +117,26 @@ function setupSpellClassListeners() {
     });
 }
 
-// Class selection function
 function handleSpellClassSelection(event) {
-    event.stopPropagation();
     const classId = this.getAttribute('data-class-id');
-    selectSpellClass(classId, event);
+    if (selectedSpellClasses.includes(classId)) {
+        selectedSpellClasses = selectedSpellClasses.filter(id => id !== classId);
+        this.classList.remove('selected');
+    } else if (selectedSpellClasses.length < 3) {
+        selectedSpellClasses.push(classId);
+        this.classList.add('selected');
+    } else {
+        alert('You can select up to 3 classes only.');
+    }
+
+    const selectedSpellClassesElement = document.getElementById('selectedSpellClasses');
+    if (selectedSpellClassesElement) {
+        selectedSpellClassesElement.value = selectedSpellClasses.join(',');
+    }
+
+    sessionStorage.setItem('selectedSpellClasses', selectedSpellClasses.join(',')); // Save to session storage
 }
+
 
 let selectedSpellClasses = []; // Array to hold selected class IDs
 
