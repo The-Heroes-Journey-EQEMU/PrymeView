@@ -142,21 +142,13 @@ if ($itemId) {
                     <script src='/scripts/hoverTool.js' defer></script>
                     <script src='/scripts/focusEffects.js' defer></script>
                     <script src='/scripts/spellSearch.js' defer></script>
-                    <style>
-                        /* Hide buttons when in embed mode */
-                        .embed-mode .button-container {
-                            display: none;
-                        }
-                    </style>
+                    
                 </head>
-                <body class='embed-mode'>
+                <body >
                     <div id='details-container'>
                         <!-- The item details will be dynamically injected here -->
                     </div>
-                    <div class='button-container'>
-                        <button id='toggle-npc-info' class='toggle-npc-info'>&larr; View NPC Info</button>
-                        <button id='upgrade-path-button' class='upgrade-path-button'>Upgrade Path</button>
-                    </div>
+                    
                     <script>
                         // Load the item details dynamically using JavaScript
                         document.addEventListener('DOMContentLoaded', () => {
