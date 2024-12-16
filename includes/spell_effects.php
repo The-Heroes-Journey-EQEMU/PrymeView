@@ -9,7 +9,7 @@ function CalcSpellEffectValue($formula, $base_value, $max, $level) {
 }
 
 // Function to generate HTML for spell effects based on effect IDs and provided cases
-function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracenames, $server_max_level) {
+function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbraces, $server_max_level) {
     $print_buffer = '<ul>';
 
     for ($n = 1; $n <= 12; $n++) {
@@ -130,6 +130,7 @@ function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracen
                     break;
 
                 case 33: // Summon Pet
+                case 68: // Summon Skeleton Pet:
                 case 106: // Summon Warder
                 case 108: // Summon Familiar
                 case 113: // Summon Horse
@@ -143,30 +144,75 @@ function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracen
                     $print_buffer .= " and restore " . $spell["effect_base_value$n"] . "% experience";
                     break;
 
-                case 13: // See Invisible
-                case 18: // Pacify
-                case 20: // Blindness
-                case 25: // Bind Affinity
-                case 26: // Gate
-                case 28: // Invisibility versus Undead
-                case 29: // Invisibility versus Animals
-                case 40: // Invulnerability
-                case 42: // Shadowstep
-                case 57: // Levitate
-                case 74: // Feign Death
-                case 99: // Root
-                case 178: // Lifetap from Weapon Damage
-                case 194: // Fade
-                case 195: // Stun Resist
-                case 311: // Limit: Combat Skills Not Allowed
+                    case 13: // See Invisible
+                    case 18: // Pacify
+                    case 20: // Blindness
+                    case 25: // Bind Affinity
+                    case 26: // Gate
+                    case 28: // Invisibility versus Undead
+                    case 29: // Invisibility versus Animals
+                    case 40: // Invunerability
+                    case 41: // Destroy Target
+                    case 42: // Shadowstep
+                    case 44: // Lycanthropy
+                    case 52: // Sense Undead
+                    case 53: // Sense Summoned
+                    case 54: // Sense Animals
+                    case 56: // True North
+                    case 57: // Levitate
+                    case 61: // Identify
+                    case 64: // SpinStun
+                    case 65: // Infravision
+                    case 66: // UltraVision
+                    case 67: // Eye of Zomm
+                    case 68: // Reclaim Energy
+                    case 73: // Bind Sight
+                    case 74: // Feign Death
+                    case 75: // Voice Graft
+                    case 76: // Sentinel
+                    case 77: // Locate Corpse
+                    case 82: // Summon PC
+                    case 90: // Cloak
+                    case 93: // Stop Rain
+                    case 94: // Make Fragile (Delete if combat)
+                    case 95: // Sacrifice
+                    case 96: // Silence
+                    case 99: // Root
+                    case 101: // Complete Heal (with duration)
+                    case 103: // Call Pet
+                    case 104: // Translocate target to their bind point
+                    case 105: // Anti-Gate
+                    case 115: // Food/Water
+                    case 117: // Make Weapons Magical
+                    case 135: // Limit: Resist(Magic allowed)
+                    case 137: // Limit: Effect(Hitpoints allowed)
+                    case 138: // Limit: Spell Type(Detrimental only)
+                    case 141: // Limit: Instant spells only
+                    case 150: // Death Save - Restore Full Health
+                    case 151: // Suspend Pet - Lose Buffs and Equipment
+                    case 154: // Remove Detrimental
+                    case 156: // Illusion: Target
+                    case 178: // Lifetap from Weapon Damage
+                    case 179: // Instrument Modifier
+                    case 182: // Hundred Hands Effect
+                    case 194: // Fade
+                    case 195: // Stun Resist
+                    case 205: // Rampage
+                    case 206: // Area of Effect Taunt
+                    case 311: // Limit: Combat Skills Not Allowed
+                    case 314: // Fixed Duration Invisbility
+                    case 299: // Wake the Dead
                     $print_buffer .= $dbspelleffects[$spell["effectid$n"]] ?? $effect_placeholder;
                     break;
 
-                case 58: // Illusion
-                    $print_buffer .= $dbspelleffects[$spell["effectid$n"]] ?? $effect_placeholder;
-                    $print_buffer .= $dbiracenames[$spell["effect_base_value$n"]] ?? "Unknown Race";
-                    break;
-
+                    case 58: // Illusion
+                        $print_buffer .= "<span class='spell-effect-illusion'>";
+                        $print_buffer .= $dbspelleffects[$spell["effectid$n"]] ?? $effect_placeholder;
+                        $print_buffer .= $dbraces[$spell["effect_base_value$n"]] ?? "Unknown Race";
+                        $print_buffer .= "</span>";
+                        break;
+                    
+                
                 default:
                     $effect_name = $dbspelleffects[$spell["effectid$n"]] ?? $effect_placeholder;
                     if ($max < 0) {
@@ -175,7 +221,9 @@ function displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbiracen
                     $print_buffer .= $effect_name;
                     $print_buffer .= ($min != $max ? " by $min to $max" : " by $max") . " (Max: $effect_limit)";
                     break;
+                    
             }
+            
 
             $print_buffer .= "</li>";
         }

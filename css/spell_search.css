@@ -347,3 +347,7 @@
     color: #ebeb6f;
 }
 
+.spell-effect-illusion {
+    font-weight: bold;
+    color: #FFD700; /* Gold color for emphasis */
+}

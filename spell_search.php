@@ -5,6 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/spell_effects.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/spellTypes.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spell_skills_races_targets.php';
 
 // Enable PHP error reporting for debugging
 ini_set('display_errors', 1);
@@ -153,14 +154,14 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
     if ($spells) {
         echo '<div class="spell-results-container">';
         echo '<table class="spell-results">';
-        echo '<tr><th>Name & Icon</th><th>Classes</th><th>Effect(s)</th><th>Mana</th><th>Cast</th><th>Recast</th><th>Duration</th><th>Target</th></tr>';
+        echo '<tr><th>Name & Icon</th><th>Classes</th><th>Effects</th><th>Mana</th><th>Skill</th><th>Target</th></tr>';
 
         $currentLevel = -1;
         foreach ($spells as $spell) {
             $spellLevel = $spell['min_level'];
             if ($spellLevel != $currentLevel) {
                 $currentLevel = $spellLevel;
-                echo "<tr><td colspan='8'><strong>Level $currentLevel Spells</strong></td></tr>";
+                echo "<tr><td colspan='6'><strong>Level $currentLevel Spells</strong></td></tr>";
             }
 
             $icon_class = "spell-" . $spell['new_icon'] . "-40";
@@ -182,16 +183,16 @@ if (!empty($namestring) || !empty($level) || !empty($types)) {
             }
 
             $effects = displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbraces, $server_max_level);
+            $skill = $dbskills[$spell['skill']] ?? 'Unknown Skill';
+            $target = $dbspelltargets[$spell['targettype']] ?? 'Unknown Target';
 
             echo '<tr class="spell-row" data-id="' . $spell['id'] . '" onclick="showSpellDetails(' . $spell['id'] . ')">';
             echo '<td>' . $icon_and_name . '</td>';
             echo '<td>' . $classIcons . '</td>';
             echo '<td>' . $effects . '</td>';
             echo '<td>' . htmlspecialchars($spell['mana'] ?? 'N/A') . '</td>';
-            echo '<td>' . htmlspecialchars($spell['cast_time'] ?? 'N/A') . '</td>';
-            echo '<td>' . htmlspecialchars($spell['recast_time'] ?? 'N/A') . '</td>';
-            echo '<td>' . htmlspecialchars($spell['duration'] ?? 'N/A') . '</td>';
-            echo '<td>' . htmlspecialchars($spell['target_type'] ?? 'N/A') . '</td>';
+            echo '<td>' . htmlspecialchars($skill) . '</td>';
+            echo '<td>' . htmlspecialchars($target) . '</td>';
             echo '</tr>';
         }
         echo '</table>';
