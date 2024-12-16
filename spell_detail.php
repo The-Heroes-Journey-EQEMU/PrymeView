@@ -1,10 +1,13 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php'; // Include class mappings
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spell_effects.php'; // Include effect handling
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spellTypes.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/spell_skills_races_targets.php'; // Include skill mappings
 
 // Get spell ID from the request
 $spellId = $_GET['id'] ?? null;
-
+$server_max_level = 70;
 if (!$spellId) {
     die('<p>Error: Spell ID is missing or invalid. Check your request URL.</p>');
 }
@@ -25,6 +28,18 @@ $stmt = $pdo->prepare("
         resisttype, 
         uninterruptable, 
         buffduration,
+        effectid1, effect_base_value1, max1, formula1,
+        effectid2, effect_base_value2, max2, formula2,
+        effectid3, effect_base_value3, max3, formula3,
+        effectid4, effect_base_value4, max4, formula4,
+        effectid5, effect_base_value5, max5, formula5,
+        effectid6, effect_base_value6, max6, formula6,
+        effectid7, effect_base_value7, max7, formula7,
+        effectid8, effect_base_value8, max8, formula8,
+        effectid9, effect_base_value9, max9, formula9,
+        effectid10, effect_base_value10, max10, formula10,
+        effectid11, effect_base_value11, max11, formula11,
+        effectid12, effect_base_value12, max12, formula12,
         classes1, classes2, classes3, classes4, classes5, 
         classes6, classes7, classes8, classes9, classes10, 
         classes11, classes12, classes13, classes14, classes15, classes16
@@ -62,6 +77,13 @@ $durationText = ($spell['buffduration'] ?? 0) > 0 ? ($spell['buffduration'] * 6)
 $castingTime = !empty($spell['cast_time']) ? ($spell['cast_time'] / 1000) . ' sec' : 'N/A';
 $recoveryTime = !empty($spell['recovery_time']) ? ($spell['recovery_time'] / 1000) . ' sec' : 'N/A';
 $recastTime = !empty($spell['recast_time']) ? ($spell['recast_time'] / 1000) . ' sec' : 'N/A';
+
+// Map target type using the $dbspelltargets array
+$targetType = $dbspelltargets[$spell['targettype']] ?? 'Unknown Target';
+$resists = $dbspellresists[$spell['resisttype']] ?? 'None';
+
+// Display effects using the spell_effects.php function
+$effects = displaySpellEffects($spell, $dbspelleffects, $dbspelltargets, $dbraces, $server_max_level);
 ?>
 
 <div class="spell-detail-container" data-spell-id="<?= htmlspecialchars($spellId) ?>">
@@ -83,15 +105,16 @@ $recastTime = !empty($spell['recast_time']) ? ($spell['recast_time'] / 1000) . '
             <p><strong>When cast on you:</strong> <?= htmlspecialchars($spell['cast_on_you'] ?? 'N/A') ?></p>
             <p><strong>When cast on other:</strong> <?= htmlspecialchars($spell['cast_on_other'] ?? 'N/A') ?></p>
             <p><strong>Mana:</strong> <?= htmlspecialchars($spell['mana'] ?? 'N/A') ?></p>
-            <p><strong>Skill:</strong> <?= htmlspecialchars($spell['skill'] ?? 'N/A') ?></p>
+            <p><strong>Skill:</strong> <?= htmlspecialchars($dbskills[$spell['skill']] ?? 'Unknown Skill') ?></p>
             <p><strong>Casting time:</strong> <?= htmlspecialchars($castingTime) ?></p>
             <p><strong>Recovery time:</strong> <?= htmlspecialchars($recoveryTime) ?></p>
             <p><strong>Recast time:</strong> <?= htmlspecialchars($recastTime) ?></p>
             <p><strong>Range:</strong> <?= htmlspecialchars($spell['range'] ?? 'N/A') ?></p>
-            <p><strong>Target:</strong> <?= htmlspecialchars($spell['targettype'] ?? 'N/A') ?></p>
-            <p><strong>Resist:</strong> <?= htmlspecialchars($spell['resisttype'] ?? 'None') ?></p>
+            <p><strong>Target:</strong> <?= htmlspecialchars($targetType) ?></p>
+            <p><strong>Resist:</strong> <?= htmlspecialchars($resists) ?></p>
             <p><strong>Interruptable:</strong> <?= htmlspecialchars($interruptableText) ?></p>
             <p><strong>Duration:</strong> <?= htmlspecialchars($durationText) ?></p>
+            <p><strong>Effects:</strong> <?= $effects ?></p>
         </div>
     </div>
 
@@ -113,8 +136,3 @@ $recastTime = !empty($spell['recast_time']) ? ($spell['recast_time'] / 1000) . '
         </div>
     </div>
 </div>
-
-
-
-
-
