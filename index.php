@@ -43,7 +43,7 @@
         <!-- Item details container, where item details will be loaded -->
         <div id="details-container"></div>
         <div class="button-container">
-       
+        
         <!-- Spell search container, where spell search results will be loaded -->
         
 

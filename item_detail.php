@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 // Include bitmask logic and database connection
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/bitmask_definitions.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/item_quest_inc.php';
 
 $itemId = $_GET['id'] ?? null;
 $embedMode = isset($_GET['embed']) && $_GET['embed'] === 'true';
@@ -101,8 +102,10 @@ if ($itemId) {
                 }
             }
 
-            // Include NPC info if requested
+            
+
             if ($includeNpcInfo) {
+                // Fetch NPC info from the database
                 $npcStmt = $pdo->prepare("
                     SELECT nt.name AS npc_name, s2.zone, lde.chance AS drop_chance
                     FROM lootdrop_entries lde
@@ -118,8 +121,23 @@ if ($itemId) {
                 $npcStmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
                 $npcStmt->execute();
                 $npcs = $npcStmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // If no NPCs are found and the item is in the epic quest list
+                if (empty($npcs) && isset($epic_quests[$itemId])) {
+                    $epicQuestName = $epic_quests[$itemId][0];
+                    $epicQuestUrl = $epic_quests[$itemId][1];
+                    $npcs[] = [
+                        'npc_name' => $epicQuestName,
+                        'zone' => '-', // Placeholder for "no zone"
+                        'drop_chance' => '-', // Placeholder for "no chance to drop"
+                        'url' => $epicQuestUrl
+                    ];
+                }
+
+                // Attach NPC or epic quest info to the item
                 $item['npc_info'] = $npcs;
             }
+
 
             if ($item && $embedMode) {
                 echo "

@@ -293,7 +293,7 @@
     opacity: 1;
     z-index: 1002; /* Ensure it appears above other elements */
     background-color: rgba(0, 0, 0, 0.9); /* Add a dark background for modal effect */
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
     border: 2px solid #bfa34b;
     box-shadow: 0 0 10px rgba(255, 223, 0, 0.6);

@@ -10,6 +10,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/races.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/classes.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/focus_search_inc.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/search_term_exclusion_list.php';
 
 $itemId = $_GET['item_id'] ?? null; // Use 'item_id' to differentiate from form submissions
 
@@ -86,15 +87,15 @@ if (isset($_POST['search'])) {
     $augSearchEnabled = isset($_POST['enableAug']) ? $_POST['enableAug'] : false;
 
     $sql = "SELECT ID, 
-    CASE 
-        WHEN Name LIKE 'Apocryphal%' THEN REPLACE(Name, 'Apocryphal', 'Legendary')
-        WHEN Name LIKE 'Rose Colored%' THEN REPLACE(Name, 'Rose Colored', 'Enchanted')
-        ELSE Name
-    END AS Name,
-    ac, hp, mana, endur, icon, classes, focuseffect, clickeffect,
-    astr, asta, adex, aagi, aint, awis, acha
-FROM items 
-WHERE 1=1";
+            CASE 
+            WHEN Name LIKE 'Apocryphal%' THEN REPLACE(Name, 'Apocryphal', 'Legendary')
+            WHEN Name LIKE 'Rose Colored%' THEN REPLACE(Name, 'Rose Colored', 'Enchanted')
+            ELSE Name
+            END AS Name,
+            ac, hp, mana, endur, icon, classes, focuseffect, clickeffect,
+            astr, asta, adex, aagi, aint, awis, acha
+            FROM items 
+            WHERE 1=1";
 
  
     // $sql = "SELECT ID, Name, ac, hp, mana, endur, icon, classes, focuseffect, clickeffect FROM items WHERE 1=1";
@@ -104,7 +105,11 @@ WHERE 1=1";
     // Exclude legendary and enchanted items unless searching by focus effects
     $isFocusEffectSearch = $selectedFocusType && $selectedFocusRank;
     if (!$isFocusEffectSearch) {
-        $sql .= " AND Name NOT LIKE 'Apocryphal%' AND Name NOT LIKE 'Rose Colored%' AND Name NOT LIKE '%Glamour-Stone'";
+        foreach ($exclusionPatterns as $pattern) {
+            // Escape single quotes for SQL
+            $escapedPattern = str_replace("'", "''", $pattern);
+            $sql .= " AND Name NOT LIKE '" . $escapedPattern . "'";
+        }
     }
     // Apply stat filter if selected
     if ($statSelect && $statValue !== '') {
@@ -538,47 +543,56 @@ WHERE 1=1";
             <?php if (!empty($searchResults) || isset($_POST['search'])): ?>
                 <h2>Search Results:</h2>
                 <div class="results-wrapper">
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>AC</th>
-                <th>HP</th>
-                <th>MANA</th>
-                <th>STR</th>
-                <th>STA</th>
-                <th>DEX</th>
-                <th>AGI</th>
-                <th>INT</th>
-                <th>WIS</th>
-                <th>CHA</th>
-                <th>Classes</th>
+                <table class="results-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>AC</th>
+            <th>HP</th>
+            <th>MANA</th>
+            <th>STR</th>
+            <th>STA</th>
+            <th>DEX</th>
+            <th>AGI</th>
+            <th>INT</th>
+            <th>WIS</th>
+            <th>CHA</th>
+            <th>Classes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($searchResults as $item): ?>
+            <tr class="item-row" data-id="<?php echo htmlspecialchars($item['ID']); ?>">
+                <td>
+                    <!-- ID now has a clickable span to copy to clipboard -->
+                    <span class="clickable-id" onclick="copyToClipboard('<?php echo htmlspecialchars($item['ID']); ?>'); event.stopPropagation();">
+                        <?php echo htmlspecialchars($item['ID']); ?>
+                    </span>
+                </td>
+                <td class="item-cell">
+                    <div class="item-content">
+                        <div class="item-icon item-<?php echo htmlspecialchars($item['icon']); ?> hover-image"></div> 
+                        <span class="item-name"><?php echo htmlspecialchars($item['Name']); ?></span>
+                    </div>
+                </td>                    
+                <td><?php echo htmlspecialchars($item['ac']); ?></td>
+                <td><?php echo htmlspecialchars($item['hp']); ?></td>
+                <td><?php echo htmlspecialchars($item['mana']); ?></td>
+                <td><?php echo htmlspecialchars($item['astr']); ?></td>
+                <td><?php echo htmlspecialchars($item['asta']); ?></td>
+                <td><?php echo htmlspecialchars($item['adex']); ?></td>
+                <td><?php echo htmlspecialchars($item['aagi']); ?></td>
+                <td><?php echo htmlspecialchars($item['aint']); ?></td>
+                <td><?php echo htmlspecialchars($item['awis']); ?></td>
+                <td><?php echo htmlspecialchars($item['acha']); ?></td>
+                <td><?php echo htmlspecialchars(getClassAbbreviations($item['classes'])); ?></td>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($searchResults as $item): ?>
-                <tr class="item-row" data-id="<?php echo htmlspecialchars($item['ID']); ?>">
-                    <td class="item-cell">
-                        <div class="item-content">
-                            <div class="item-icon item-<?php echo htmlspecialchars($item['icon']); ?> hover-image"></div> 
-                            <span class="item-name"><?php echo htmlspecialchars($item['Name']); ?></span>
-                        </div>
-                    </td>
-                    <td><?php echo htmlspecialchars($item['ac']); ?></td>
-                    <td><?php echo htmlspecialchars($item['hp']); ?></td>
-                    <td><?php echo htmlspecialchars($item['mana']); ?></td>
-                    <td><?php echo htmlspecialchars($item['astr']); ?></td>
-                    <td><?php echo htmlspecialchars($item['asta']); ?></td>
-                    <td><?php echo htmlspecialchars($item['adex']); ?></td>
-                    <td><?php echo htmlspecialchars($item['aagi']); ?></td>
-                    <td><?php echo htmlspecialchars($item['aint']); ?></td>
-                    <td><?php echo htmlspecialchars($item['awis']); ?></td>
-                    <td><?php echo htmlspecialchars($item['acha']); ?></td>
-                    <td><?php echo htmlspecialchars(getClassAbbreviations($item['classes'])); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+
 </div>
     <?php elseif (isset($_POST['search'])): ?>
         <h2>No results found.</h2>

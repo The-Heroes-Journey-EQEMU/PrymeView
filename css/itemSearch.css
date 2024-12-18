@@ -268,3 +268,26 @@
 .item-type-toggle label {
     margin-right: 5px;
 }
+
+/* Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    visibility: visible;
+}

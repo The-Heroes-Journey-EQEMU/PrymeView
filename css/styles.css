@@ -57,7 +57,7 @@ body {
     border: 2px solid rgba(210, 180, 140, 0.8); /* Sand-colored border */
     border-radius: 12px;
     box-shadow: 0 0 15px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
-    max-width: 1000px;
+    
 }
 
 
@@ -325,8 +325,28 @@ body {
 /* Close button */
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    bottom: 1px;
+    right: 550px;
+    background-color: #504a3a; /* Dark sand color */
+    color: #ffffff; /* White text */
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 1003;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    
+}
+
+.close-button:hover {
+    background-color: #e6be2d; /* Slightly brighter sand on hover */
+}
+
+.copy-legendaryid-button {
+    position: absolute;
+    bottom: 1px;
+    right: 205px;
     background-color: #504a3a; /* Dark sand color */
     color: #ffffff; /* White text */
     border: none;
@@ -338,10 +358,28 @@ body {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
-.close-button:hover {
+.copy-legendaryid-button:hover {
     background-color: #e6be2d; /* Slightly brighter sand on hover */
 }
 
+.copy-enchantedid-button {
+    position: absolute;
+    bottom: 1px;
+    left: 205px;
+    background-color: #504a3a; /* Dark sand color */
+    color: #ffffff; /* White text */
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 1003;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.copy-enchantedid-button:hover {
+    background-color: #e6be2d; /* Slightly brighter sand on hover */
+}
 
 
 .button-container {
@@ -357,4 +395,14 @@ body {
 }
 #spell-search-container {
     display: none;
+}
+
+.clickable-id {
+    text-decoration: underline;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.clickable-id:hover {
+    color: #0056b3;
 }

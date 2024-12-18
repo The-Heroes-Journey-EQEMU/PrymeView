@@ -1,17 +1,11 @@
-// Clear sessionStorage on full page reload and reset item type dropdown
-if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-    sessionStorage.clear();
-    const itemTypeDropdown = document.getElementById('item_type');
-    if (itemTypeDropdown) itemTypeDropdown.value = '-1';
-}
-
 const slotPairs = { 15: 16, 16: 15, 1: 4, 4: 1, 9: 10, 10: 9 };
 let selectedRowId = sessionStorage.getItem('selectedRowId') || null;
 let selectedRace = null;
 let selectedClass = null;
 let selectedExpansion = null;
 
-// This is the loadContent function for item search
+
+// Load content dynamically for item search
 function loadContentForItemSearch(page) {
     const contentDisplay = document.getElementById('content-display');
     document.getElementById('content-display').style.display = 'block';
@@ -19,34 +13,54 @@ function loadContentForItemSearch(page) {
     document.getElementById('spells-wrapper').style.display = 'none';
     
     const detailsContainer = document.getElementById('details-container');
-    const upgradeTabContainer = document.querySelector('.upgrade-path-tab-container'); // Access the upgrade tab
-    /* resetUpgradePathButton(); */
+    const upgradeTabContainer = document.querySelector('.upgrade-path-tab-container');
+
     if (!contentDisplay || !detailsContainer || !upgradeTabContainer) {
-        console.error("Required containers or upgrade tab are missing from the DOM.");
+        console.error("Required containers are missing from the DOM.");
         return;
     }
 
-    // Hide the Upgrade Path tab initially
+    // Hide upgrade tab
     upgradeTabContainer.style.display = 'none';
 
+    // Reset only when loading the specific item search page
     if (page === 'item_search.php') {
-        selectedRowId = null; // Reset the selected row ID
-        console.log("Item search page loaded, session storage for row ID and other settings will persist.");
+        selectedRowId = null; // Reset selection
+        sessionStorage.removeItem('selectedRowId');
+        sessionStorage.removeItem('searchTerm'); // Clear saved search terms
+        sessionStorage.removeItem('selectedSlot');
+        sessionStorage.removeItem('selectedRace');
+        sessionStorage.removeItem('selectedClasses');
+        sessionStorage.removeItem('selectedItemType');
+        sessionStorage.removeItem('selectedExpansion');
+        sessionStorage.removeItem('enableItemType');
+        sessionStorage.removeItem('enableStatFilter');
+        sessionStorage.removeItem('enableFocus');
+        sessionStorage.removeItem('focusType');
+        sessionStorage.removeItem('focusRankNormal');
+        sessionStorage.removeItem('focusRankEnhancedMinion');
+        sessionStorage.removeItem('selectedRowId');
+        sessionStorage.removeItem('searchTerm');
+        console.log('Session storage reset on reload.');
+        console.log("Item search page reset: Session storage keys cleared.");
     }
-
+    
     detailsContainer.innerHTML = '';
     detailsContainer.style.display = 'none';
     contentDisplay.innerHTML = '<p>Loading...</p>';
 
+    // Fetch content dynamically
     fetch(`${page}?cb=${new Date().getTime()}`)
         .then(response => response.ok ? response.text() : Promise.reject(`HTTP error! Status: ${response.status}`))
         .then(data => {
             contentDisplay.innerHTML = data;
             setupListeners();
 
+            // Attach search form listener
             const itemSearchForm = contentDisplay.querySelector('#searchForm');
             if (itemSearchForm) attachItemSearchListener(itemSearchForm);
 
+            // Restore previously selected row if any
             if (selectedRowId) {
                 const previouslySelectedRow = document.querySelector(`.item-row[data-id="${selectedRowId}"]`);
                 if (previouslySelectedRow) previouslySelectedRow.classList.add('selected-row');
@@ -57,9 +71,6 @@ function loadContentForItemSearch(page) {
             contentDisplay.innerHTML = '<p>Error loading content.</p>';
         });
 }
-
-
-
 
 
 
@@ -690,3 +701,15 @@ function setupStatFilterListeners() {
     if (modValue) modValue.addEventListener('input', saveStatFilters);
 }
 
+
+
+
+// Add event listener to rows for item details loading
+document.querySelectorAll('.item-row').forEach(row => {
+    row.addEventListener('click', function(event) {
+        // Your code to load item details
+        const itemId = row.getAttribute('data-id');
+        // For example: loadItemDetails(itemId);
+        console.log(`Load item details for ID: ${itemId}`);
+    });
+});

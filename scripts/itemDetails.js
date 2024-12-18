@@ -21,9 +21,12 @@ function loadItemDetails(itemId) {
             <div class="item-version">
                 ${generateTooltipContent(baseData)}
             </div>
+            <div id="toast-notification" class="toast-notification"></div>
             <div class="button-container">
                 <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
                 <button id="upgrade-path-button" class="upgrade-path-button">Upgrade Path</button>
+                <button id="copy-id-button" class="copy-id-button">Share/Copy URL</button>
+                
             </div>
             <div class="npc-info-panel" id="npc-info-panel">
                 <div class="npc-info-content" id="npc-info-content">
@@ -33,29 +36,82 @@ function loadItemDetails(itemId) {
                     <button id="prev-page" disabled>&laquo; Prev</button>
                     <button id="next-page">Next &raquo;</button>
                 </div>
+                <div id="toast-notification" class="toast-notification"></div>
+
             </div>
-            </div>
-        
             `;
-            /* // Call function to position the upgrade tab in the middle
-            positionUpgradeTab(); // Call this after the content is injected */
-            
-            // Make sure the upgrade button is visible and functional
+
+            // Ensure details container is visible
+            detailsContainer.style.display = 'block';
+
             // Add event listener for Upgrade Path button
             document.getElementById('upgrade-path-button').addEventListener('click', () => {
                 loadUpgradePath(itemId);
             });
-            // Ensure details container is visible
-            detailsContainer.style.display = 'block';
 
             // Add event listener to NPC info button
             document.getElementById('toggle-npc-info').addEventListener('click', () => {
                 toggleNpcInfo(itemId);
             });
 
+            // Add event listener for Copy/Share URL button
+            document.getElementById('copy-id-button').addEventListener('click', () => {
+                const urlToCopy = `https://prymetymelive.com/item_detail.php?embed=true&id=${itemId}`;
+                copyUrlToClipboard(urlToCopy);
+            });
+           
+
+        
         })
         .catch(error => console.error('Error loading item details:', error));
 }
+
+// Function to copy URL to clipboard and show toast
+function copyUrlToClipboard(url) {
+    navigator.clipboard.writeText(url)
+        .then(() => {
+            showToast('URL copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy URL: ', err);
+            showToast('Failed to copy URL. Try again.', true); // Pass true for an error
+        });
+}
+
+// Function to copy ID to clipboard and show toast
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            showToast(`ID ${text} has been copied!`);
+        })
+        .catch(err => {
+            console.error('Failed to copy ID: ', err);
+            showToast('Failed to copy ID. Try again.', true); // Pass true for an error
+        });
+}
+
+// Function to show toast notification
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast-notification');
+    toast.textContent = message;
+
+    // Change background color if it's an error message
+    if (isError) {
+        toast.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+    } else {
+        toast.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    }
+
+    // Show the toast
+    toast.classList.add('show');
+
+    // Hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000); // 3000ms = 3 seconds
+}
+
+
 
 
 
@@ -92,22 +148,34 @@ function loadUpgradePath(itemId) {
                 document.body.insertAdjacentHTML('beforeend', `
                     <div id="upgrade-path-container" class="item-versions-horizontal">
                         <button class="close-button" onclick="closeUpgradePath(${itemId})">Close</button>
-                        
+                        <button id="copy-legendaryid-button" class="copy-legendaryid-button">Share/Copy URL</button>
+                        <button id="copy-enchantedid-button" class="copy-enchantedid-button">Share/Copy URL</button>
                         <div class="item-version enchanted-glow">
                             ${generateTooltipContent(enchantedData)}
                         </div>
                         <img src="/images/icons/upgradearrow.png" alt="Upgrade Arrow" class="upgrade-arrow">
                         <div class="item-version legendary-glow">
                             ${generateTooltipContent(legendaryData)}
+                            
                             <div class="sparkle sparkle-1"></div>
                             <div class="sparkle sparkle-2"></div>
                             <div class="sparkle sparkle-3"></div>
                             <div class="sparkle sparkle-4"></div>
                             <div class="sparkle sparkle-5"></div>
                         </div>
+                        
                     </div>
                 `);
-
+                // Add event listener to the new "Copy/Share URL" button
+                document.getElementById('copy-enchantedid-button').addEventListener('click', () => {
+                    const legendaryUrl = `https://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 1000000}`;
+                    copyToClipboard(legendaryUrl);
+                });
+                // Add event listener to the new "Copy/Share URL" button
+                document.getElementById('copy-legendaryid-button').addEventListener('click', () => {
+                    const legendaryUrl = `https://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 2000000}`;
+                    copyToClipboard(legendaryUrl);
+                });
                 // Show the overlay by setting proper styles
                 const upgradePathContainer = document.getElementById('upgrade-path-container');
                 if (upgradePathContainer) {
@@ -222,33 +290,40 @@ function displayNpcPage(page) {
     // Calculate start and end indices for slicing the data
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const pageData = npcData.slice(start, end); // Get the current page data
+    const pageData = npcData.slice(start, end);
 
-    // Display the NPCs for the current page
+    // Display NPCs or Epic Quest info for the current page
     if (pageData.length > 0) {
-        npcInfoContent.innerHTML = pageData.map(npc => `
-            <div class="npc-entry">
-                <p><strong>NPC Name:</strong> ${npc.npc_name}</p>
-                <p><strong>Zone:</strong> ${npc.zone}</p>
-                <p><strong>Chance to Drop:</strong> ${npc.drop_chance}%</p>
-            </div>
-        `).join('');
+        npcInfoContent.innerHTML = pageData.map(npc => {
+            if (npc.url) { // If it has a URL, it's an epic quest
+                return `
+                    <div class="npc-entry">
+                        <p><strong>Quest:</strong> ${npc.npc_name}</p>
+                        <p><a href="${npc.url}" target="_blank">View Epic Quest Details</a></p>
+                    </div>
+                `;
+            } else { // Otherwise, show NPC details
+                return `
+                    <div class="npc-entry">
+                        <p><strong>NPC Name:</strong> ${npc.npc_name}</p>
+                        <p><strong>Zone:</strong> ${npc.zone}</p>
+                        <p><strong>Chance to Drop:</strong> ${npc.drop_chance}%</p>
+                    </div>
+                `;
+            }
+        }).join('');
     } else {
-        npcInfoContent.innerHTML = '<p>No NPCs available for this page.</p>';
+        npcInfoContent.innerHTML = '<p>No NPCs or Epic Quest information available for this item.</p>';
     }
 
     // Update pagination buttons
     const prevPageButton = document.getElementById('prev-page');
     const nextPageButton = document.getElementById('next-page');
 
-    if (prevPageButton) {
-        prevPageButton.disabled = page === 1; // Disable if on the first page
-    }
-
-    if (nextPageButton) {
-        nextPageButton.disabled = end >= npcData.length; // Disable if on the last page
-    }
+    if (prevPageButton) prevPageButton.disabled = page === 1;
+    if (nextPageButton) nextPageButton.disabled = end >= npcData.length;
 }
+
 
 
 
