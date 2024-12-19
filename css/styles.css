@@ -406,3 +406,24 @@ body {
 .clickable-id:hover {
     color: #0056b3;
 }
+
+.epic-link {
+    color: rgba(210, 180, 140, 0.8);
+    text-decoration: none; /* Optional: Remove underline */
+}
+
+.epic-link:hover {
+    color: rgba(235, 213, 186, 0.8);
+    text-decoration: underline; /* Optional: Add underline on hover */
+}
+
+.item-versions-detail-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 20px; /* Space between items */
+}
+
+
+

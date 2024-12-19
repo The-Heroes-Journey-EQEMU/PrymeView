@@ -140,13 +140,19 @@ if ($itemId) {
 
 
             if ($item && $embedMode) {
+                $baseId = $itemId % 1000000; // Normalize to the base ID
+                $itemName = htmlspecialchars($item['Name'] ?? 'Unknown Item');
+                $itemDescription = "THJ Item Search";
+                $itemImage = "http://prymetymelive.com/item_view.php?id=" . $baseId;
+                $itemUrl = "http://prymetymelive.com/item_detail.php?embed=true&id=" . $baseId;
+            
                 echo "
                 <!DOCTYPE html>
                 <html lang='en'>
                 <head>
                     <meta charset='UTF-8'>
                     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                    <title>Item Details</title>
+                    <title>$itemName</title>
                     <link rel='stylesheet' href='/css/styles.css'>
                     <link rel='stylesheet' href='/sprites/item_icons.css'>
                     <link rel='stylesheet' href='/css/tooltip.css'>
@@ -155,28 +161,40 @@ if ($itemId) {
                     <link rel='stylesheet' href='/sprites/spell_icons/spell_icons_30.css'>
                     <link rel='stylesheet' href='/sprites/spell_icons/spell_icons_40.css'>
                     <link rel='stylesheet' href='/css/spell_search.css'>
+                    <link rel='stylesheet' href='/css/itemSearch.css'>
+            
+                    <!-- Open Graph Meta Tags -->
+                    <meta property='og:title' content='$itemName' />
+                    <meta property='og:description' content='$itemDescription' />
+                    <meta property='og:image' content='$itemImage' />
+                    <meta property='og:url' content='$itemUrl' />
+                    <meta property='og:type' content='website' />
+            
                     <script src='/scripts/scripts.js' defer></script>
                     <script src='/scripts/itemDetails.js' defer></script>
                     <script src='/scripts/hoverTool.js' defer></script>
                     <script src='/scripts/focusEffects.js' defer></script>
                     <script src='/scripts/spellSearch.js' defer></script>
-                    
                 </head>
-                <body >
-                    <div id='details-container'>
-                        <!-- The item details will be dynamically injected here -->
-                    </div>
-                    
-                    <script>
-                        // Load the item details dynamically using JavaScript
-                        document.addEventListener('DOMContentLoaded', () => {
-                            loadItemDetails(" . json_encode($itemId) . ");
-                        });
-                    </script>
+                <body>
+                <div id='embed-container' class='item-versions-container' style='display: flex; gap: 20px;'>
+                    <div id='base-item' class='item-container'></div>
+                    <div id='enchanted-item' class='item-container'></div>
+                    <div id='legendary-item' class='item-container'></div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const baseId = " . json_encode($baseId) . ";
+                        loadMultipleItemDetails(baseId); // Load all three versions
+                    });
+                </script>
+
+            
                 </body>
                 </html>";
                 exit;
             }
+            
             
             
 

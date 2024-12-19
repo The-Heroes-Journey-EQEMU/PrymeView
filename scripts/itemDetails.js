@@ -56,7 +56,7 @@ function loadItemDetails(itemId) {
 
             // Add event listener for Copy/Share URL button
             document.getElementById('copy-id-button').addEventListener('click', () => {
-                const urlToCopy = `https://prymetymelive.com/item_detail.php?embed=true&id=${itemId}`;
+                const urlToCopy = `http://prymetymelive.com/item_detail.php?embed=true&id=${itemId}`;
                 copyUrlToClipboard(urlToCopy);
             });
            
@@ -66,17 +66,44 @@ function loadItemDetails(itemId) {
         .catch(error => console.error('Error loading item details:', error));
 }
 
-// Function to copy URL to clipboard and show toast
+
+
 function copyUrlToClipboard(url) {
-    navigator.clipboard.writeText(url)
-        .then(() => {
-            showToast('URL copied to clipboard!');
-        })
-        .catch(err => {
-            console.error('Failed to copy URL: ', err);
-            showToast('Failed to copy URL. Try again.', true); // Pass true for an error
-        });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                showToast('URL copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy URL: ', err);
+                showToast('Failed to copy URL. Try again.', true); // Pass true for an error
+            });
+    } else {
+        // Fallback for unsupported environments
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        textArea.style.position = 'fixed'; // Prevent scrolling to the bottom of the page
+        textArea.style.top = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showToast('URL copied to clipboard!');
+            } else {
+                showToast('Failed to copy URL. Try again.', true);
+            }
+        } catch (err) {
+            console.error('Fallback: Could not copy URL', err);
+            showToast('Failed to copy URL. Try again.', true);
+        }
+
+        document.body.removeChild(textArea);
+    }
 }
+
 
 // Function to copy ID to clipboard and show toast
 function copyToClipboard(text) {
@@ -168,13 +195,13 @@ function loadUpgradePath(itemId) {
                 `);
                 // Add event listener to the new "Copy/Share URL" button
                 document.getElementById('copy-enchantedid-button').addEventListener('click', () => {
-                    const legendaryUrl = `https://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 1000000}`;
-                    copyToClipboard(legendaryUrl);
+                    const legendaryUrl = `http://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 1000000}`;
+                    copyUrlToClipboard(legendaryUrl);
                 });
                 // Add event listener to the new "Copy/Share URL" button
                 document.getElementById('copy-legendaryid-button').addEventListener('click', () => {
-                    const legendaryUrl = `https://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 2000000}`;
-                    copyToClipboard(legendaryUrl);
+                    const legendaryUrl = `http://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 2000000}`;
+                    copyUrlToClipboard(legendaryUrl);
                 });
                 // Show the overlay by setting proper styles
                 const upgradePathContainer = document.getElementById('upgrade-path-container');
@@ -188,6 +215,98 @@ function loadUpgradePath(itemId) {
         .catch(error => {
             console.error('Error loading upgrade path details:', error);
         });
+}
+
+function loadMultipleItemDetails(baseId) {
+    const containers = {
+        base: document.getElementById('base-item'),
+        enchanted: document.getElementById('enchanted-item'),
+        legendary: document.getElementById('legendary-item')
+    };
+
+    // Item IDs for the three versions
+    const itemIds = {
+        base: baseId,
+        enchanted: baseId + 1000000,
+        legendary: baseId + 2000000
+    };
+
+    // Loop through the versions and load details
+    for (const [key, itemId] of Object.entries(itemIds)) {
+        const container = containers[key];
+        if (!container) {
+            console.error(`Container for ${key} not found.`);
+            continue;
+        }
+
+        fetch(`item_detail.php?id=${itemId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch item ${itemId}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Add extra content for the base item only
+                const extraContent =
+                    key === 'base'
+                        ? `
+                        <div class="button-container">
+                        <div id="toast-notification" class="toast-notification"></div>
+                            <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
+                            <button id="copy-id-button" class="copy-id-button">Share/Copy URL</button>
+                        </div>
+                        <div class="npc-info-panel" id="npc-info-panel">
+                            <div class="npc-info-content" id="npc-info-content">
+                                <!-- NPC info will be loaded here dynamically -->
+                            </div>
+                            <div class="pagination-controls">
+                                <button id="prev-page" disabled>&laquo; Prev</button>
+                                <button id="next-page">Next &raquo;</button>
+                            </div>
+                            <div id="toast-notification" class="toast-notification"></div>
+                        </div>
+                        `
+                        : '';
+
+                container.innerHTML = `
+                    <div class="item-version">
+                        ${generateTooltipContent(data)}
+                        ${extraContent}
+                    </div>
+                `;
+
+                // Add necessary event listeners for the base item
+                if (key === 'base') {
+                    setupBaseItemEventListeners(itemId);
+                }
+            })
+            .catch(error => {
+                console.error(`Error loading item ${itemId}:`, error);
+                container.innerHTML = `<p>Error loading item ${itemId}.</p>`;
+            });
+    }
+}
+
+function setupBaseItemEventListeners(baseId) {
+    
+
+    // Add event listener for the "View NPC Info" button
+    const toggleNpcInfoButton = document.getElementById('toggle-npc-info');
+    if (toggleNpcInfoButton) {
+        toggleNpcInfoButton.addEventListener('click', () => {
+            toggleNpcInfo(baseId);
+        });
+    }
+
+    // Add event listener for the "Share/Copy URL" button
+    const copyIdButton = document.getElementById('copy-id-button');
+    if (copyIdButton) {
+        copyIdButton.addEventListener('click', () => {
+            const urlToCopy = `http://prymetymelive.com/item_detail.php?embed=true&id=${baseId}`;
+            copyUrlToClipboard(urlToCopy);
+        });
+    }
 }
 
 
@@ -295,11 +414,11 @@ function displayNpcPage(page) {
     // Display NPCs or Epic Quest info for the current page
     if (pageData.length > 0) {
         npcInfoContent.innerHTML = pageData.map(npc => {
-            if (npc.url) { // If it has a URL, it's an epic quest
+            if (npc.url) { 
                 return `
                     <div class="npc-entry">
                         <p><strong>Quest:</strong> ${npc.npc_name}</p>
-                        <p><a href="${npc.url}" target="_blank">View Epic Quest Details</a></p>
+                        <p><a href="${npc.url}" target="_blank" class="epic-link">View Epic Quest Details</a></p>
                     </div>
                 `;
             } else { // Otherwise, show NPC details
