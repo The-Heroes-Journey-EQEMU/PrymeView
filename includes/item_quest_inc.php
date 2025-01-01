@@ -1,5 +1,3 @@
-
-
 <?php
 
 $epic_quests = [
@@ -96,9 +94,29 @@ $epic_quests = [
     2066177 => ['Warrior Epic Quest', 'https://thj-wiki.web.app/equipment-guide/epics/war-epic/'] // Warrior Blade of Strategy Enchanted
 ];
 
-// $quests = [
+$classic_quests = [
+    13991 => ['Library Book', 'https://www.eqprogression.com/testament-of-vanear-quest-guide//'], // Tesatment of Vanear
+];
 
-// ];
+$velious_quests = [
+    // Velious quests
+    31468 => ['The Second Arcane Test', 'https://everquest.allakhazam.com/db/quest.html?quest=991'], // Boots of Deep Thought
+    31467 => ['Wisdom - The Long Battle', 'https://everquest.allakhazam.com/db/quest.html?quest=988'], // Boots of Silent Striding
+    31462 => ['Test of the Emerald Tear', 'https://everquest.allakhazam.com/db/quest.html?quest=996'], // Buckler of Insight
+    31471 => ['Cloak of the Fire Storm', 'https://everquest.allakhazam.com/db/quest.html?quest=987'], // Cloak of the Fire Storm
+    31470 => ['Test of the Living Flame', 'https://everquest.allakhazam.com/db/quest.html?quest=987'], // Earring of the Living Flame
+    31463 => ['Request of the Arcane', 'https://everquest.allakhazam.com/db/quest.html?quest=992'], // Mask of the Silver Eyes
+    31472 => ['Test of Protection', 'https://everquest.allakhazam.com/db/quest.html?quest=984'], // Pauldrons of the Deep Flame
+    31469 => ['Test of the Tooth', 'https://everquest.allakhazam.com/db/quest.html?quest=985'], // Serrated Dragon Tooth
+    31461 => ['Test of the Platinum Tear', 'https://everquest.allakhazam.com/db/quest.html?quest=995'], // Silver Bracelet of Speed
+    31460 => ['Test of the Ruby Tear', 'https://everquest.allakhazam.com/db/quest.html?quest=994'], // Silver Charm of Tranquility
+    31464 => ['Request of the Strong', 'https://everquest.allakhazam.com/db/quest.html?quest=993'], // Silver Mask of the Slayer
+    31465 => ['Wisdom - The Short Battle', 'https://everquest.allakhazam.com/db/quest.html?quest=989'], // White Dragon Idol
+    31466 => ['The First Arcane Test', 'https://everquest.allakhazam.com/db/quest.html?quest=990'],  // White Dragon Statue
+    1200 => ['Coldain Shawl #8: Blessed Coldain Prayer Shawl', 'https://everquest.allakhazam.com/db/quest.html?quest=1869']  // Blessed coldain shawl
+
+];
+
 
 
 

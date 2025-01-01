@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THJ Charbrowse</title>
+    <title>THJ DB</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/sprites/item_icons.css">
     <link rel="stylesheet" href="/css/tooltip.css">

@@ -385,7 +385,7 @@ if (isset($_POST['search'])) {
                                 <option value="awis">Wisdom</option>
                                 <option value="damage">Damage</option>
                                 <option value="delay">Delay</option>
-                                <option value="ratio">Ratio</option>
+                                <!-- <option value="ratio">Ratio</option> -->
                                 <option value="haste">Haste</option>
                                 <option value="regen">HP Regen</option>
                                 <option value="manaregen">Mana Regen</option>

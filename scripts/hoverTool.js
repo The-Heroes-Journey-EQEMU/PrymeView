@@ -161,10 +161,16 @@ function generateTooltipContent(data) {
 
         Casttime: data.casttime
     }
-
+    const clickLevel = [
+        data.clicklevel ? `<div class="proc-line"><b>Click level:</b> ${data.clicklevel}</div>` : '',
+    ]
     const procRate = [
+        
+        
         data.procrate ? `<div class="proc-line"><b>Procrate:</b> ${data.procrate}</div>` : '',
     ]
+
+    
     // Helper function to format stats with heroic values
     function formatWithHeroic(label, value, heroic) {
         return value && value !== 0 && value !== -1 && value !== 'N/A' && value !== 'Unknown'
@@ -304,8 +310,15 @@ function generateTooltipContent(data) {
                 ${spellDetails}
                 
             </div>
+            <div class="tooltip-section click-level">
+                
+                ${clickLevel}
+                
+            </div>
            <div class="tooltip-stats proc-rate">
-           ${procRate}
+           
+            ${procRate}
+           
            </div>
             
             

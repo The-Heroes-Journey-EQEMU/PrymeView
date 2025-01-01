@@ -8,6 +8,8 @@ error_reporting(E_ALL);
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/bitmask_definitions.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/db_connection.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/item_quest_inc.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/craft_inc.php'; 
+
 
 $itemId = $_GET['id'] ?? null;
 $embedMode = isset($_GET['embed']) && $_GET['embed'] === 'true';
@@ -101,9 +103,7 @@ if ($itemId) {
                     }
                 }
             }
-
             
-
             if ($includeNpcInfo) {
                 // Fetch NPC info from the database
                 $npcStmt = $pdo->prepare("
@@ -121,31 +121,74 @@ if ($itemId) {
                 $npcStmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
                 $npcStmt->execute();
                 $npcs = $npcStmt->fetchAll(PDO::FETCH_ASSOC);
-
-                // If no NPCs are found and the item is in the epic quest list
-                if (empty($npcs) && isset($epic_quests[$itemId])) {
-                    $epicQuestName = $epic_quests[$itemId][0];
-                    $epicQuestUrl = $epic_quests[$itemId][1];
-                    $npcs[] = [
-                        'npc_name' => $epicQuestName,
-                        'zone' => '-', // Placeholder for "no zone"
-                        'drop_chance' => '-', // Placeholder for "no chance to drop"
-                        'url' => $epicQuestUrl
+            
+                // If no NPCs are found, check all quest arrays
+                if (empty($npcs)) {
+                    $questSources = [
+                        $epic_quests,
+                        $classic_quests,
+                        $velious_quests
                     ];
+            
+                    $found = false;
+                    foreach ($questSources as $questArray) {
+                        if (isset($questArray[$itemId])) {
+                            $questName = $questArray[$itemId][0];
+                            $questUrl = $questArray[$itemId][1];
+                            $npcs[] = [
+                                'npc_name' => $questName,
+                                'zone' => '-', // Placeholder for "no zone"
+                                'drop_chance' => '-', // Placeholder for "no chance to drop"
+                                'url' => $questUrl
+                            ];
+                            $found = true;
+                            break; // Exit loop once a match is found
+                        }
+                    }
+            
+                    // If not found in quests, check crafting sources
+                    if (!$found) {
+                        
+            
+                        $craftSources = [
+                            $poisons,
+                            $potions
+                        ];
+            
+                        foreach ($craftSources as $craftArray) {
+                            if (isset($craftArray[$itemId])) {
+                                $craftUrl = $craftArray[$itemId][0];
+                                $npcs[] = [
+                                    'npc_name' => $item['Name'], // Use the fetched item name
+                                    'zone' => '-', // Placeholder for "no zone"
+                                    'drop_chance' => '-', // Placeholder for "no chance to drop"
+                                    'url' => $craftUrl
+                                ];
+                                break; // Exit loop once a match is found
+                            }
+                        }
+                    }
                 }
-
-                // Attach NPC or epic quest info to the item
+            
+                // Attach NPC, quest, or crafting info to the item
                 $item['npc_info'] = $npcs;
             }
-
+            
+            
 
             if ($item && $embedMode) {
                 $baseId = $itemId % 1000000; // Normalize to the base ID
                 $itemName = htmlspecialchars($item['Name'] ?? 'Unknown Item');
-                $itemDescription = "THJ Item Search";
-                $itemImage = "http://prymetymelive.com/item_view.php?id=" . $baseId;
-                $itemUrl = "http://prymetymelive.com/item_detail.php?embed=true&id=" . $baseId;
-            
+                
+                // Generate item stats for description
+                $itemStats =  "http://prymetymelive.com/itemview.php?id={$baseId}";
+                
+                // Use the item's specific image
+                $itemImage = "/item_view.php?id={$baseId}";
+                
+                // Build the URL
+                $itemUrl = "http://prymetymelive.com/item_detail.php?embed=true&id={$baseId}";
+                
                 echo "
                 <!DOCTYPE html>
                 <html lang='en'>
@@ -165,7 +208,7 @@ if ($itemId) {
             
                     <!-- Open Graph Meta Tags -->
                     <meta property='og:title' content='$itemName' />
-                    <meta property='og:description' content='$itemDescription' />
+                    <meta property='og:description' content='$itemStats' />
                     <meta property='og:image' content='$itemImage' />
                     <meta property='og:url' content='$itemUrl' />
                     <meta property='og:type' content='website' />
@@ -188,12 +231,13 @@ if ($itemId) {
                         loadMultipleItemDetails(baseId); // Load all three versions
                     });
                 </script>
-
-            
                 </body>
                 </html>";
                 exit;
             }
+            
+
+            
             
             
             

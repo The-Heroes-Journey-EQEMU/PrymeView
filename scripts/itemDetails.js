@@ -23,10 +23,9 @@ function loadItemDetails(itemId) {
             </div>
             <div id="toast-notification" class="toast-notification"></div>
             <div class="button-container">
-                <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
+                <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC or Quest Info</button>
                 <button id="upgrade-path-button" class="upgrade-path-button">Upgrade Path</button>
                 <button id="copy-id-button" class="copy-id-button">Share/Copy URL</button>
-                
             </div>
             <div class="npc-info-panel" id="npc-info-panel">
                 <div class="npc-info-content" id="npc-info-content">
@@ -37,9 +36,10 @@ function loadItemDetails(itemId) {
                     <button id="next-page">Next &raquo;</button>
                 </div>
                 <div id="toast-notification" class="toast-notification"></div>
-
             </div>
             `;
+
+            
 
             // Ensure details container is visible
             detailsContainer.style.display = 'block';
@@ -59,12 +59,10 @@ function loadItemDetails(itemId) {
                 const urlToCopy = `http://prymetymelive.com/item_detail.php?embed=true&id=${itemId}`;
                 copyUrlToClipboard(urlToCopy);
             });
-           
-
-        
         })
         .catch(error => console.error('Error loading item details:', error));
 }
+
 
 
 
@@ -253,7 +251,7 @@ function loadMultipleItemDetails(baseId) {
                         ? `
                         <div class="button-container">
                         <div id="toast-notification" class="toast-notification"></div>
-                            <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC Info</button>
+                            <button id="toggle-npc-info" class="toggle-npc-info">&larr; View NPC or Quest Info</button>
                             <button id="copy-id-button" class="copy-id-button">Share/Copy URL</button>
                         </div>
                         <div class="npc-info-panel" id="npc-info-panel">
@@ -418,7 +416,7 @@ function displayNpcPage(page) {
                 return `
                     <div class="npc-entry">
                         <p><strong>Quest:</strong> ${npc.npc_name}</p>
-                        <p><a href="${npc.url}" target="_blank" class="epic-link">View Epic Quest Details</a></p>
+                        <p><a href="${npc.url}" target="_blank" class="epic-link">View Quest Details</a></p>
                     </div>
                 `;
             } else { // Otherwise, show NPC details
