@@ -137,12 +137,12 @@ if (isset($_POST['search'])) {
     // Apply modification filter if selected
     if ($modSelect && $modValue !== '') {
         // Ensure the comparison operator is valid for safety
-        $validComparisons = ['=', '>', '<'];
+        $validComparisons = ['=', '>', '<', '>=', '<='];
         if (in_array($modComparison, $validComparisons)) {
             $sql .= " AND $modSelect $modComparison :modValue";
             $params[':modValue'] = $modValue;
         }
-    }
+    }   
     // Add item type filter
     if ($selectedItemType >= 0) {
         $sql .= " AND itemtype = :itemType";

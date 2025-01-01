@@ -181,13 +181,13 @@ if ($itemId) {
                 $itemName = htmlspecialchars($item['Name'] ?? 'Unknown Item');
                 
                 // Generate item stats for description
-                $itemStats =  "http://prymetymelive.com/itemview.php?id={$baseId}";
+                $itemStats =  "https://info.heroesjourneyemu.com/item_detail.php?embed=true&id={$baseId}";
                 
                 // Use the item's specific image
                 $itemImage = "/item_view.php?id={$baseId}";
                 
                 // Build the URL
-                $itemUrl = "http://prymetymelive.com/item_detail.php?embed=true&id={$baseId}";
+                $itemUrl = "https://info.heroesjourneyemu.com/item_detail.php?embed=true&id={$baseId}";
                 
                 echo "
                 <!DOCTYPE html>
