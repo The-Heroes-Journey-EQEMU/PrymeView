@@ -26,5 +26,5 @@ jobs:
         ssh "${DEPLOY_USER}@${DEPLOY_HOST}" "
           cd ${DEPLOY_PATH} &&
           git fetch origin &&
-          git reset --hard origin/master
+          git reset --hard origin/main
         "
