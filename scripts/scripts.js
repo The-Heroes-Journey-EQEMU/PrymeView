@@ -24,26 +24,48 @@ function loadContentForItemSearch(page) {
     upgradeTabContainer.style.display = 'none';
 
     // Reset only when loading the specific item search page
-    if (page === 'item_search.php') {
-        selectedRowId = null; // Reset selection
-        sessionStorage.removeItem('selectedRowId');
-        sessionStorage.removeItem('searchTerm'); // Clear saved search terms
-        sessionStorage.removeItem('selectedSlot');
-        sessionStorage.removeItem('selectedRace');
-        sessionStorage.removeItem('selectedClasses');
-        sessionStorage.removeItem('selectedItemType');
-        sessionStorage.removeItem('selectedExpansion');
-        sessionStorage.removeItem('enableItemType');
-        sessionStorage.removeItem('enableStatFilter');
-        sessionStorage.removeItem('enableFocus');
-        sessionStorage.removeItem('focusType');
-        sessionStorage.removeItem('focusRankNormal');
-        sessionStorage.removeItem('focusRankEnhancedMinion');
-        sessionStorage.removeItem('selectedRowId');
-        sessionStorage.removeItem('searchTerm');
-        console.log('Session storage reset on reload.');
-        console.log("Item search page reset: Session storage keys cleared.");
-    }
+// Reset only when loading the specific item search page
+if (page === 'item_search.php') {
+    selectedRowId = null; // Reset selection
+    sessionStorage.removeItem('selectedRowId');
+    sessionStorage.removeItem('searchTerm'); 
+    sessionStorage.removeItem('selectedSlot');
+    sessionStorage.removeItem('selectedRace');
+    sessionStorage.removeItem('selectedClasses');
+    sessionStorage.removeItem('selectedItemType');
+    sessionStorage.removeItem('selectedExpansion');
+    sessionStorage.removeItem('enableItemType');
+    sessionStorage.removeItem('enableStatFilter');
+    sessionStorage.removeItem('enableFocus');
+    sessionStorage.removeItem('focusType');
+    sessionStorage.removeItem('focusRankNormal');
+    sessionStorage.removeItem('focusRankEnhancedMinion');
+
+    // Resist filters
+    sessionStorage.removeItem('selectedResist');
+    sessionStorage.removeItem('resistOperator');
+    sessionStorage.removeItem('resistValue');
+
+    // Heroic stat filters
+    sessionStorage.removeItem('selectedHeroicStat');
+    sessionStorage.removeItem('heroicOperator');
+    sessionStorage.removeItem('heroicValue');
+
+    // Modification filters
+    sessionStorage.removeItem('selectedMod');
+    sessionStorage.removeItem('modOperator');
+    sessionStorage.removeItem('modValue');
+
+    // Stat filters
+    sessionStorage.removeItem('selectedStat');
+    sessionStorage.removeItem('selectedOperator');
+    sessionStorage.removeItem('statValue');
+
+    console.log('Session storage reset on reload.');
+    console.log("Item search page reset: Session storage keys cleared.");
+}
+
+
     
     detailsContainer.innerHTML = '';
     detailsContainer.style.display = 'none';
