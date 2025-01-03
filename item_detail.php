@@ -133,18 +133,19 @@ if ($itemId) {
                     $found = false;
                     foreach ($questSources as $questArray) {
                         if (isset($questArray[$itemId])) {
-                            $questName = $questArray[$itemId][0];
-                            $questUrl = $questArray[$itemId][1];
+                            $quest = $questArray[$itemId];
                             $npcs[] = [
-                                'npc_name' => $questName,
+                                'npc_name' => $quest['npc_name'],
                                 'zone' => '-', // Placeholder for "no zone"
                                 'drop_chance' => '-', // Placeholder for "no chance to drop"
-                                'url' => $questUrl
+                                'url' => $quest['url'],
+                                'type' => $quest['type'] // Add type to the response
                             ];
                             $found = true;
                             break; // Exit loop once a match is found
                         }
                     }
+                    
             
                     // If not found in quests, check crafting sources
                     if (!$found) {
@@ -157,12 +158,13 @@ if ($itemId) {
             
                         foreach ($craftSources as $craftArray) {
                             if (isset($craftArray[$itemId])) {
-                                $craftUrl = $craftArray[$itemId][0];
+                                $craft = $craftArray[$itemId];
                                 $npcs[] = [
                                     'npc_name' => $item['Name'], // Use the fetched item name
                                     'zone' => '-', // Placeholder for "no zone"
                                     'drop_chance' => '-', // Placeholder for "no chance to drop"
-                                    'url' => $craftUrl
+                                    'url' => $craft['url'],
+                                    'type' => $craft['type'] // Add type to the response
                                 ];
                                 break; // Exit loop once a match is found
                             }

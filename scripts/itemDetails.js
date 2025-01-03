@@ -56,7 +56,7 @@ function loadItemDetails(itemId) {
 
             // Add event listener for Copy/Share URL button
             document.getElementById('copy-id-button').addEventListener('click', () => {
-                const urlToCopy = `http://prymetymelive.com/item_detail.php?embed=true&id=${itemId}`;
+                const urlToCopy = `https://info.heroesjourneyemu.com/item_detail.php?embed=true&id=${itemId}`;
                 copyUrlToClipboard(urlToCopy);
             });
         })
@@ -193,12 +193,12 @@ function loadUpgradePath(itemId) {
                 `);
                 // Add event listener to the new "Copy/Share URL" button
                 document.getElementById('copy-enchantedid-button').addEventListener('click', () => {
-                    const legendaryUrl = `http://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 1000000}`;
+                    const legendaryUrl = `https://info.heroesjourneyemu.com/item_detail.php?embed=true&id=${Number(itemId) + 1000000}`;
                     copyUrlToClipboard(legendaryUrl);
                 });
                 // Add event listener to the new "Copy/Share URL" button
                 document.getElementById('copy-legendaryid-button').addEventListener('click', () => {
-                    const legendaryUrl = `http://prymetymelive.com/item_detail.php?embed=true&id=${Number(itemId) + 2000000}`;
+                    const legendaryUrl = `https://info.heroesjourneyemu.com/item_detail.php?embed=true&id=${Number(itemId) + 2000000}`;
                     copyUrlToClipboard(legendaryUrl);
                 });
                 // Show the overlay by setting proper styles
@@ -301,7 +301,7 @@ function setupBaseItemEventListeners(baseId) {
     const copyIdButton = document.getElementById('copy-id-button');
     if (copyIdButton) {
         copyIdButton.addEventListener('click', () => {
-            const urlToCopy = `http://prymetymelive.com/item_detail.php?embed=true&id=${baseId}`;
+            const urlToCopy = `https://info.heroesjourneyemu.com/item_detail.php?embed=true&id=${baseId}`;
             copyUrlToClipboard(urlToCopy);
         });
     }
@@ -409,17 +409,24 @@ function displayNpcPage(page) {
     const end = start + itemsPerPage;
     const pageData = npcData.slice(start, end);
 
-    // Display NPCs or Epic Quest info for the current page
+    // Display NPCs, Quests, or Recipes for the current page
     if (pageData.length > 0) {
         npcInfoContent.innerHTML = pageData.map(npc => {
-            if (npc.url) { 
+            if (npc.type === 'Quest') {
                 return `
                     <div class="npc-entry">
                         <p><strong>Quest:</strong> ${npc.npc_name}</p>
                         <p><a href="${npc.url}" target="_blank" class="epic-link">View Quest Details</a></p>
                     </div>
                 `;
-            } else { // Otherwise, show NPC details
+            } else if (npc.type === 'Recipe') {
+                return `
+                    <div class="npc-entry">
+                        <p><strong>Recipe:</strong> ${npc.npc_name}</p>
+                        <p><a href="${npc.url}" target="_blank" class="recipe-link">View Recipe Details</a></p>
+                    </div>
+                `;
+            } else {
                 return `
                     <div class="npc-entry">
                         <p><strong>NPC Name:</strong> ${npc.npc_name}</p>
@@ -430,7 +437,7 @@ function displayNpcPage(page) {
             }
         }).join('');
     } else {
-        npcInfoContent.innerHTML = '<p>No NPCs or Epic Quest information available for this item.</p>';
+        npcInfoContent.innerHTML = '<p>No NPC, Quest, or Recipe information available for this item.</p>';
     }
 
     // Update pagination buttons
@@ -440,6 +447,8 @@ function displayNpcPage(page) {
     if (prevPageButton) prevPageButton.disabled = page === 1;
     if (nextPageButton) nextPageButton.disabled = end >= npcData.length;
 }
+
+
 
 
 
