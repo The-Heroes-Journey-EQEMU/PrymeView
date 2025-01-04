@@ -135,18 +135,17 @@ if ($itemId) {
                         if (isset($questArray[$itemId])) {
                             $quest = $questArray[$itemId];
                             $npcs[] = [
-                                'npc_name' => $quest['npc_name'],
+                                'npc_name' => $quest[0], // First index: Quest Name
                                 'zone' => '-', // Placeholder for "no zone"
                                 'drop_chance' => '-', // Placeholder for "no chance to drop"
-                                'url' => $quest['url'],
-                                'type' => $quest['type'] // Add type to the response
+                                'url' => $quest[1], // Second index: URL
+                                'type' => 'Quest' // Explicitly mark this as a Quest
                             ];
                             $found = true;
                             break; // Exit loop once a match is found
                         }
                     }
                     
-            
                     // If not found in quests, check crafting sources
                     if (!$found) {
                         
