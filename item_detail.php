@@ -181,15 +181,23 @@ if ($itemId) {
                 $baseId = $itemId % 1000000; // Normalize to the base ID
                 $itemName = htmlspecialchars($item['Name'] ?? 'Unknown Item');
                 
+                // Check if enchanted and legendary versions exist
+                $enchantedId = $baseId + 1000000;
+                $legendaryId = $baseId + 2000000;
+            
+                $checkVersionsQuery = $pdo->prepare("SELECT id FROM items WHERE id IN (?, ?)");
+                $checkVersionsQuery->execute([$enchantedId, $legendaryId]);
+                $existingVersions = $checkVersionsQuery->fetchAll(PDO::FETCH_COLUMN);
+            
+                // Determine which versions to show
+                $showEnchanted = in_array($enchantedId, $existingVersions);
+                $showLegendary = in_array($legendaryId, $existingVersions);
+                
                 // Generate item stats for description
-                $itemStats =  "https://info.heroesjourneyemu.com/item_detail.php?embed=true&id={$baseId}";
-                
-                // Use the item's specific image
+                $itemStats = "https://info.heroesjourneyemu.com/item_detail.php?embed=true&id={$baseId}";
                 $itemImage = "/item_view.php?id={$baseId}";
-                
-                // Build the URL
                 $itemUrl = "https://info.heroesjourneyemu.com/item_detail.php?embed=true&id={$baseId}";
-                
+            
                 echo "
                 <!DOCTYPE html>
                 <html lang='en'>
@@ -223,8 +231,8 @@ if ($itemId) {
                 <body>
                 <div id='embed-container' class='item-versions-container' style='display: flex; gap: 20px;'>
                     <div id='base-item' class='item-container'></div>
-                    <div id='enchanted-item' class='item-container'></div>
-                    <div id='legendary-item' class='item-container'></div>
+                    " . ($showEnchanted ? "<div id='enchanted-item' class='item-container'></div>" : "") . "
+                    " . ($showLegendary ? "<div id='legendary-item' class='item-container'></div>" : "") . "
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
