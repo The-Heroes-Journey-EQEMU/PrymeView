@@ -521,33 +521,52 @@ document.addEventListener("DOMContentLoaded", () => {
 function copyAACommandToClipboard(element) {
     const text = element.textContent;
 
-    // Fallback if navigator.clipboard is unavailable
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    // Attempt to use the modern Clipboard API (works only in HTTPS)
+    if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text)
-            .then(() => showToast(`Copied: ${text}`))
-            .catch(err => console.error("Failed to copy text: ", err));
+            .then(() => showToast("Copied: " + text))
+            .catch(err => {
+                console.error("Clipboard API failed, using fallback:", err);
+                fallbackCopyText(text);
+            });
     } else {
-        // Fallback for unsupported browsers
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand("copy");
-            showToast(`Copied: ${text}`);
-        } catch (err) {
-            console.error("Fallback copy failed:", err);
-        }
-        document.body.removeChild(textarea);
+        // Use fallback for HTTP or older browsers
+        fallbackCopyText(text);
     }
 }
 
+// Fallback method using a temporary textarea
+function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed"; // Prevent scrolling to textarea
+    textarea.style.opacity = "0"; // Hide it from view
+    document.body.appendChild(textarea);
+    textarea.select();
 
+    try {
+        document.execCommand("copy");
+        showToast("Copied: " + text);
+    } catch (err) {
+        console.error("Fallback copy failed:", err);
+    }
+    
+    document.body.removeChild(textarea);
+}
+
+// Toast notification function
 function showToast(message) {
     const toast = document.getElementById("toast-container");
     const toastMessage = document.getElementById("toast-message");
+
+    if (!toast || !toastMessage) {
+        console.error("Toast container not found.");
+        return;
+    }
+
     toastMessage.textContent = message;
     toast.style.display = "block";
+
     setTimeout(() => {
         toast.style.display = "none";
     }, 3000);
