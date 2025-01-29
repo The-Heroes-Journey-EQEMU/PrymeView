@@ -1,0 +1,364 @@
+/* AA Search Container */
+#aa-search-container {
+    background-color: rgba(46, 46, 46, 0.95); /* Darker background */
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ddd0b0; /* Warm sand border */
+    box-shadow: 0 0 15px rgba(191, 163, 75, 0.5); /* Soft sand glow */
+    margin-top: 20px;
+    width: 100%; /* Take full width */
+    max-width: 100vw; /* Limit to viewport width */
+    box-sizing: border-box;
+}
+
+/* AA Wrapper */
+#aa-wrapper {
+    display: none;
+    position: relative;
+    width: 100vw; /* Full viewport width */
+    max-width: 100%; /* Prevent overflow */
+    max-height: 99vh; /* Set a max height to prevent excessive overflow */
+    overflow-y: auto; /* Only enable vertical scroll if content overflows */
+    border: 2px solid rgba(210, 180, 140, 0.8); /* Sand-colored border */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.5); /* Soft sand shadow */
+    padding: 20px;
+    background-color: rgba(46, 46, 46, 0.95); /* Darker background for the wrapper */
+    box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+/* Class Selection for AA */
+.aa-class-selection {
+    display: flex;
+    flex-wrap: wrap; /* Allow icons to wrap to avoid overflow */
+    gap: 5px;
+    background-color: rgba(46, 46, 46, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Class Icon Styling */
+.aa-class-icon-container {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+    margin-right: 8px;
+}
+
+.aa-class-icon-container:hover {
+    transform: scale(1.05); /* Slight scale up on hover */
+}
+
+/* AA Class Icon */
+.aa-class-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 3px;
+    display: inline-block;
+    filter: brightness(0.8);
+    transition: filter 0.2s ease;
+}
+
+/* Selected State for Class Icon Container */
+.aa-class-icon-container.selected {
+    filter: brightness(1.3);
+    background-color: rgba(210, 180, 140, 0.4); /* Slightly brighter sand */
+    box-shadow: 0 0 15px rgba(210, 180, 140, 0.7); /* Brighter sand glow */
+    border-radius: 5px;
+    transform: scale(1.1); /* Slightly larger when selected */
+}
+
+/* Search Input Styling */
+.aa-search-input {
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ddd0b0; /* Sand color */
+    background: rgba(30, 30, 30, 0.85); /* Dark background */
+    border: 1px solid #c4a484; /* Sand border */
+    border-radius: 4px;
+    width: 39%;
+    outline: none;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Search Button Styling */
+.aa-search-button {
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ddd0b0; /* Sand color for text */
+    background-color: #504a3a; /* Dark background for button */
+    border: 1px solid #c4a484; /* Sand border */
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(191, 163, 75, 0.5); /* Soft glow */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aa-search-button:hover {
+    background-color: #7f715d; /* Lighter sand */
+    color: #ffffff; /* White text */
+    box-shadow: 0 0 15px rgba(230, 190, 45, 0.7); /* Brighter glow */
+}
+
+/* Tabs Styling */
+#aa-tabs-container {
+    margin-top: 20px;
+    
+}
+
+.aa-tabs {
+    display: flex;
+    margin-left: 7px;
+}
+
+.aa-tab-button {
+    padding: 10px 20px;
+    background: #2e2e2e;
+    color: #ddd0b0;
+    border: none;
+    border-right: 1px solid #ddd0b0;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s ease;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.aa-tab-button:hover {
+    background: #504a3a;
+}
+
+.aa-tab-button.active {
+    background: #ddd0b0;
+    color: #2e2e2e;
+}
+
+.aa-tab-content {
+    display: none;
+    padding: 20px;
+    background: rgba(46, 46, 46, 0.9);
+    border-radius: 10px;
+    border: 1px solid #ddd0b0;
+}
+
+.aa-tab-content.active {
+    display: block;
+}
+
+/* AA Results Table */
+.aa-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(30, 30, 30, 0.85); /* Dark background for contrast */
+}
+
+.aa-results-table th,
+.aa-results-table td {
+    border: 1px solid #7f715d; /* Darker sand border */
+    padding: 10px;
+}
+
+.aa-results-table th {
+    background-color: #bfa34b; /* Warm sand color */
+    color: #2e2e2e; /* Dark text for contrast */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.aa-results-table tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.aa-results-table tr:hover {
+    background-color: rgba(210, 180, 140, 0.2); /* Highlight row on hover */
+}
+
+.aa-results-table tr.expanded {
+    background-color: rgba(210, 180, 140, 0.3); /* Background color for expanded row */
+}
+
+.aa-detail-row {
+    display: none; /* Hidden by default */
+    background-color: rgba(46, 46, 46, 0.9); /* Match table background */
+    transition: height 0.3s ease; /* Smooth slide-out effect */
+}
+
+.aa-detail-row.open {
+    display: table-row; /* Make it visible when open */
+}
+
+.aa-detail-panel-content {
+    padding: 10px;
+    background: rgba(30, 30, 30, 0.95);
+    color: #ddd0b0;
+    border: 1px solid #c4a484;
+    border-radius: 8px;
+}
+
+.placeholder-text {
+    text-align: center;
+    color: #bfa34b; /* Warm sand color for placeholder text */
+    font-style: italic;
+    padding: 10px;
+}
+
+.aa-details-container {
+    padding: 20px;
+    background-color: #1e1e1e; /* Matches theme background */
+    color: #ffffff; /* White text for readability */
+    border: 1px solid #bfa34b; /* Gold border for theme consistency */
+    border-radius: 5px; /* Smooth corners */
+}
+
+.aa-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #bfa34b; /* Divider line */
+    padding-bottom: 10px;
+}
+
+.aa-header h2 {
+    margin: 0;
+    color: #bfa34b; /* Gold for the title */
+}
+
+.aa-header p {
+    margin: 5px 0 0;
+    color: #ffffff; /* White for the description */
+}
+
+
+.aa-rank-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #bfa34b; /* Gold text color */
+}
+
+.aa-rank-list li {
+    margin: 5px 0; /* Reduce space between items */
+    padding: 5px;
+    border-bottom: 1px solid #bfa34b; /* Divider between ranks */
+}
+
+.aa-rank-list li:last-child {
+    border-bottom: none; /* Remove last border */
+}
+
+.dropdown-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #bfa34b;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dropdown-header .arrow {
+    margin-right: 8px;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-header.open .arrow {
+    transform: rotate(-90deg); /* Rotate down when open */
+}
+
+.dropdown-content {
+    padding: 10px;
+    background-color: #292929; /* Dark background */
+    border: 1px solid #bfa34b; /* Gold border */
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.dropdown-header:hover {
+    color: #ffffff; /* White on hover */
+}
+
+.aa-rank-item {
+    padding: 15px;
+    background-color: #292929; /* Slightly lighter dark background */
+    border: 1px solid #bfa34b; /* Gold border */
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+.aa-rank-item p {
+    margin: 5px 0;
+}
+
+.aa-rank-item strong {
+    color: #bfa34b; /* Highlight rank titles in gold */
+}
+
+
+.spell-details {
+    margin-top: 10px;
+    padding: 10px;
+    background: #292929;
+    border: 1px solid #292929;
+    border-radius: 5px;
+}
+.activate-command {
+    margin: 10px 0; /* Reduced vertical margin for compactness */
+    padding: 10px; /* Reduced padding */
+    background: #292929; /* Slightly lighter dark background */
+    border-radius: 5px; /* Match other elements */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    font-family: Arial, sans-serif; /* Consistent font */
+    color: #bfa34b; /* Gold text for consistency */
+}
+
+.activate-command h3 {
+    margin: 0 0 5px 0; /* Reduced bottom margin for compactness */
+    font-size: 16px; /* Slightly smaller font size */
+    color: #bfa34b; /* Gold for header text */
+    font-weight: bold;
+    border-bottom: 1px solid #bfa34b; /* Divider for separation */
+    padding-bottom: 5px;
+}
+
+.copy-command {
+    cursor: pointer;
+    color: #c4a484; /* Sand-like color for link */
+    font-size: 14px; /* Adjusted font size */
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.copy-command:hover {
+    color: #2a8c38; /* Highlight green on hover */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: none; /* Ensure this is toggled by JavaScript */
+}
+
+#toast-message {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+

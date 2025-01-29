@@ -11,12 +11,14 @@ function loadContentForSpellSearch(page) {
     const detailsContainer = document.getElementById('details-container');
     const spellsWrapper = document.getElementById('spells-wrapper');
     const spellSearchContainer = document.getElementById('spell-search-container');
+    const aaWrapper = document.getElementById('aa-wrapper');
 
     if (contentDisplay) contentDisplay.style.display = 'none';
-    if (detailsContainer) {
-        detailsContainer.style.display = 'none';
-        detailsContainer.innerHTML = ''; // Clear details container
-    }
+        if (detailsContainer) {
+            detailsContainer.style.display = 'none';
+            detailsContainer.innerHTML = ''; // Clear details container
+        }
+    if (aaWrapper) aaWrapper.style.display = 'none';
     if (spellsWrapper) spellsWrapper.style.display = 'block';
 
     if (spellSearchContainer) {

@@ -5,75 +5,44 @@ let selectedClass = null;
 let selectedExpansion = null;
 
 
-// Load content dynamically for item search
 function loadContentForItemSearch(page) {
     const contentDisplay = document.getElementById('content-display');
-    document.getElementById('content-display').style.display = 'block';
-    document.getElementById('spell-search-container').style.display = 'none';
-    document.getElementById('spells-wrapper').style.display = 'none';
-    
+    const spellsWrapper = document.getElementById('spells-wrapper');
+    const aaWrapper = document.getElementById('aa-wrapper');
     const detailsContainer = document.getElementById('details-container');
     const upgradeTabContainer = document.querySelector('.upgrade-path-tab-container');
 
+    // Check for required elements
     if (!contentDisplay || !detailsContainer || !upgradeTabContainer) {
         console.error("Required containers are missing from the DOM.");
         return;
     }
 
-    // Hide upgrade tab
-    upgradeTabContainer.style.display = 'none';
+    // Hide other sections
+    if (spellsWrapper) spellsWrapper.style.display = 'none';
+    if (aaWrapper) aaWrapper.style.display = 'none';
+    if (detailsContainer) detailsContainer.style.display = 'none';
+    if (upgradeTabContainer) upgradeTabContainer.style.display = 'none';
 
-    // Reset only when loading the specific item search page
-// Reset only when loading the specific item search page
-if (page === 'item_search.php') {
-    selectedRowId = null; // Reset selection
-    sessionStorage.removeItem('selectedRowId');
-    sessionStorage.removeItem('searchTerm'); 
-    sessionStorage.removeItem('selectedSlot');
-    sessionStorage.removeItem('selectedRace');
-    sessionStorage.removeItem('selectedClasses');
-    sessionStorage.removeItem('selectedItemType');
-    sessionStorage.removeItem('selectedExpansion');
-    sessionStorage.removeItem('enableItemType');
-    sessionStorage.removeItem('enableStatFilter');
-    sessionStorage.removeItem('enableFocus');
-    sessionStorage.removeItem('focusType');
-    sessionStorage.removeItem('focusRankNormal');
-    sessionStorage.removeItem('focusRankEnhancedMinion');
+    // Reset session storage only for item search page
+    if (page === 'item_search.php') {
+        selectedRowId = null; // Reset selection
+        sessionStorage.clear(); // Clear all session storage for simplicity
+        console.log("Session storage cleared.");
+    }
 
-    // Resist filters
-    sessionStorage.removeItem('selectedResist');
-    sessionStorage.removeItem('resistOperator');
-    sessionStorage.removeItem('resistValue');
-
-    // Heroic stat filters
-    sessionStorage.removeItem('selectedHeroicStat');
-    sessionStorage.removeItem('heroicOperator');
-    sessionStorage.removeItem('heroicValue');
-
-    // Modification filters
-    sessionStorage.removeItem('selectedMod');
-    sessionStorage.removeItem('modOperator');
-    sessionStorage.removeItem('modValue');
-
-    // Stat filters
-    sessionStorage.removeItem('selectedStat');
-    sessionStorage.removeItem('selectedOperator');
-    sessionStorage.removeItem('statValue');
-
-    console.log('Session storage reset on reload.');
-    console.log("Item search page reset: Session storage keys cleared.");
-}
-
-
-    
-    detailsContainer.innerHTML = '';
-    detailsContainer.style.display = 'none';
+    // Reset the content display
     contentDisplay.innerHTML = '<p>Loading...</p>';
+    contentDisplay.style.display = 'block';
 
-    // Fetch content dynamically
+    // Fetch the content dynamically
     fetch(`${page}?cb=${new Date().getTime()}`)
-        .then(response => response.ok ? response.text() : Promise.reject(`HTTP error! Status: ${response.status}`))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text();
+        })
         .then(data => {
             contentDisplay.innerHTML = data;
             setupListeners();
