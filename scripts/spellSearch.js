@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply hover listeners globally when the page loads
     setupItemHoverListener();
 });
-
 function loadContentForSpellSearch(page) {
     clearSpellSearchSessionStorage(); // Clear spell-related session storage
 
@@ -12,15 +11,25 @@ function loadContentForSpellSearch(page) {
     const spellsWrapper = document.getElementById('spells-wrapper');
     const spellSearchContainer = document.getElementById('spell-search-container');
     const aaWrapper = document.getElementById('aa-wrapper');
+    const aaSearchContainer = document.getElementById('aa-search-container');
 
+    // Hide other sections
     if (contentDisplay) contentDisplay.style.display = 'none';
-        if (detailsContainer) {
-            detailsContainer.style.display = 'none';
-            detailsContainer.innerHTML = ''; // Clear details container
-        }
-    if (aaWrapper) aaWrapper.style.display = 'none';
-    if (spellsWrapper) spellsWrapper.style.display = 'block';
+    if (detailsContainer) {
+        detailsContainer.style.display = 'none';
+        detailsContainer.innerHTML = ''; // Clear details container
+    }
+    if (aaWrapper) {
+        aaWrapper.style.display = 'none';
+        aaWrapper.innerHTML = ''; // Clear AA wrapper to remove lingering content
+    }
+    if (aaSearchContainer) {
+        aaSearchContainer.style.display = 'none';
+        aaSearchContainer.innerHTML = ''; // Ensure it's cleared out
+    }
 
+    // Show spell search section
+    if (spellsWrapper) spellsWrapper.style.display = 'block';
     if (spellSearchContainer) {
         spellSearchContainer.style.display = 'block';
         spellSearchContainer.innerHTML = '<p>Loading spell search...</p>';
@@ -33,6 +42,7 @@ function loadContentForSpellSearch(page) {
                 spellSearchContainer.innerHTML = data;
             }
 
+            // Re-attach event listeners
             const spellSearchForm = spellSearchContainer.querySelector('#spellSearchForm');
             if (spellSearchForm) {
                 attachSpellSearchListener(spellSearchForm);
@@ -46,6 +56,7 @@ function loadContentForSpellSearch(page) {
             }
         });
 }
+
 
 
 function attachSpellSearchListener(spellSearchForm) {
