@@ -23,7 +23,7 @@ function loadContentForSpellSearch(page) {
         aaWrapper.style.display = 'none';
         aaWrapper.innerHTML = ''; // Clear AA wrapper to remove lingering content
     }
-    if (aaSearchContainer) {
+    if (aaSearchContainer) { // test
         aaSearchContainer.style.display = 'none';
         aaSearchContainer.innerHTML = ''; // Ensure it's cleared out
     }
