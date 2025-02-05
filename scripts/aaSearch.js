@@ -147,92 +147,89 @@ function fetchAASearchResults(event) {
     const selectedClassesElement = document.getElementById("selectedAAClasses");
     const selectedClasses = selectedClassesElement ? selectedClassesElement.value : '';
 
-    // Construct the query string
-    const queryParams = new URLSearchParams({
-        name: nameInput || '', // Allow empty name input
-        classes: selectedClasses, // Send raw class IDs
+    const queryParams = new URLSearchParams();
+    if (nameInput) queryParams.append("name", nameInput);
+    if (selectedClasses) queryParams.append("classes", selectedClasses);
+
+fetch(`/aa_search_results.php?${queryParams.toString()}`)
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Fetched AA search results:", data);
+
+        // Clear previous results in all tabs
+        document.getElementById("aa-general-results").innerHTML = "";
+        document.getElementById("aa-archetype-results").innerHTML = "";
+        document.getElementById("aa-class-results").innerHTML = "";
+        document.getElementById("dynamic-class-tabs").innerHTML = "";
+        document.getElementById("dynamic-tabs-content").innerHTML = "";
+
+        // Populate General tab
+        if (data.general && data.general.length > 0) {
+            data.general.forEach((item) => {
+                document.getElementById("aa-general-results").innerHTML += `
+                    <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.decoded_classes}</td>
+                    </tr>`;
+            });
+        } else {
+            document.getElementById("aa-general-results").innerHTML = `
+                <tr>
+                    <td colspan="3" class="placeholder-text">No results found in General.</td>
+                </tr>`;
+        }
+
+        // Populate Archetype tab
+        if (data.archetype && data.archetype.length > 0) {
+            data.archetype.forEach((item) => {
+                document.getElementById("aa-archetype-results").innerHTML += `
+                    <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.decoded_classes}</td>
+                    </tr>`;
+            });
+        } else {
+            document.getElementById("aa-archetype-results").innerHTML = `
+                <tr>
+                    <td colspan="3" class="placeholder-text">No results found in Archetype.</td>
+                </tr>`;
+        }
+
+        // Populate Class tab
+        if (data.class && data.class.length > 0) {
+            data.class.forEach((item) => {
+                document.getElementById("aa-class-results").innerHTML += `
+                    <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.decoded_classes}</td>
+                    </tr>`;
+            });
+        } else {
+            document.getElementById("aa-class-results").innerHTML = `
+                <tr>
+                    <td colspan="3" class="placeholder-text">No results found in Class.</td>
+                </tr>`;
+        }
+
+        // Handle dynamic tabs for selected classes
+        if (data.dynamic) {
+            setupDynamicTabs(data.dynamic);
+        } else {
+            console.error("No dynamic data in response.");
+        }
+    })
+    .catch((error) => {
+        console.error("Error fetching AA search results:", error);
+        alert("Failed to fetch results. Check the console for details.");
     });
-
-    // Fetch the search results
-    fetch(`/aa_search_results.php?${queryParams.toString()}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Fetched AA search results:", data);
-
-            // Clear previous results in all tabs
-            document.getElementById("aa-general-results").innerHTML = "";
-            document.getElementById("aa-archetype-results").innerHTML = "";
-            document.getElementById("aa-class-results").innerHTML = "";
-            document.getElementById("dynamic-class-tabs").innerHTML = "";
-            document.getElementById("dynamic-tabs-content").innerHTML = "";
-
-            // Populate General tab
-            if (data.general && data.general.length > 0) {
-                data.general.forEach((item) => {
-                    document.getElementById("aa-general-results").innerHTML += `
-                        <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
-                            <td>${item.id}</td>
-                            <td>${item.name}</td>
-                            <td>${item.decoded_classes}</td>
-                        </tr>`;
-                });
-            } else {
-                document.getElementById("aa-general-results").innerHTML = `
-                    <tr>
-                        <td colspan="3" class="placeholder-text">No results found in General.</td>
-                    </tr>`;
-            }
-
-            // Populate Archetype tab
-            if (data.archetype && data.archetype.length > 0) {
-                data.archetype.forEach((item) => {
-                    document.getElementById("aa-archetype-results").innerHTML += `
-                        <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
-                            <td>${item.id}</td>
-                            <td>${item.name}</td>
-                            <td>${item.decoded_classes}</td>
-                        </tr>`;
-                });
-            } else {
-                document.getElementById("aa-archetype-results").innerHTML = `
-                    <tr>
-                        <td colspan="3" class="placeholder-text">No results found in Archetype.</td>
-                    </tr>`;
-            }
-
-            // Populate Class tab
-            if (data.class && data.class.length > 0) {
-                data.class.forEach((item) => {
-                    document.getElementById("aa-class-results").innerHTML += `
-                        <tr class="aa-row" data-id="${item.id}" onclick="showAADetails(${item.id})">
-                            <td>${item.id}</td>
-                            <td>${item.name}</td>
-                            <td>${item.decoded_classes}</td>
-                        </tr>`;
-                });
-            } else {
-                document.getElementById("aa-class-results").innerHTML = `
-                    <tr>
-                        <td colspan="3" class="placeholder-text">No results found in Class.</td>
-                    </tr>`;
-            }
-
-            // Handle dynamic tabs for selected classes
-            if (data.dynamic) {
-                setupDynamicTabs(data.dynamic);
-            } else {
-                console.error("No dynamic data in response.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching AA search results:", error);
-            alert("Failed to fetch results. Check the console for details.");
-        });
 }
 
 

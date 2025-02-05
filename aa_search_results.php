@@ -29,13 +29,26 @@ function getClassIcons($aaClassesBitmask, $classes) {
 
 
 // Get parameters from the request
+
 $selectedClasses = isset($_GET['classes']) ? explode(',', $_GET['classes']) : [];
-$name = isset($_GET['name']) ? $_GET['name'] : '';
+$name = isset($_GET['name']) ? trim($_GET['name']) : '';
+
+// Convert class values to integers
+$selectedClasses = array_map('intval', $selectedClasses);
 
 // Calculate the class bitmask
 $classBitmask = array_reduce($selectedClasses, function ($carry, $classId) {
     return $carry | intval($classId);
 }, 0);
+
+// Ensure valid fallback for name-only searches
+if (empty($selectedClasses)) {
+    $classBitmask = 0; // Allows searching by name only
+}
+
+// Debugging: Log to error log
+error_log("Class Bitmask: $classBitmask, Search Name: $name");
+
 
 // Calculate the bitmask representing all classes
 $allClassesBitmask = array_sum(array_keys($classMapping));
@@ -47,14 +60,17 @@ error_log("Search Name: $name");
 // Prepare the query to fetch all types
 $query = "
     SELECT * FROM aa_ability
-    WHERE
-        enabled = 1
-        AND name NOT LIKE '%Unknown AA%'
-        AND (
-            ((classes & :bitmask) > 0 AND name LIKE :name)
-            OR (classes = 65535 AND name LIKE :name)
-        )
+    WHERE enabled = 1
+    AND name NOT LIKE '%Unknown AA%'
+    AND (
+        (:bitmask = 0 AND name LIKE :name) -- Case 1: Search by name only
+        OR (:name = '' AND (classes & :bitmask) > 0) -- Case 2: Search by class only
+        OR ((classes & :bitmask) > 0 AND name LIKE :name) -- Case 3: Search by both name and class
+        OR (classes = 65535 AND name LIKE :name) -- Case 4: Matches all classes
+    )
 ";
+
+
 
 try {
     $stmt = $pdo->prepare($query);
